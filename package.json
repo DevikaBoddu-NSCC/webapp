@@ -1,0 +1,28 @@
+{
+  "name": "webapp-dev",
+  "version": "1.0.0",
+  "description": "webapp- assignment2-cloud computing",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:pre-migrate": "node scripts/database.js",
+    "db:migrate": "npm run db:pre-migrate && node_modules/.bin/sequelize db:migrate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevikaBoddu13/webapp-dev.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevikaBoddu13/webapp-dev/issues"
+  },
+  "homepage": "https://github.com/DevikaBoddu13/webapp-dev#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.9.1",
+    "sequelize": "^6.11.0"
+  }
+}
