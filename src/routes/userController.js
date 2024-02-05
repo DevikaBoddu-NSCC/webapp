@@ -37,7 +37,7 @@ router.post('/users', async (req, res) => {
             account_created: user.account_created,
             account_updated: user.account_updated,
         };
-        // userResponse.pick(response, ["first_name","last_name", "price","username","account_created",""]);
+
         res.status(201).json(userResponse);
     } catch (error) {
         console.error('Error creating user:', error);
@@ -56,12 +56,14 @@ router.put('/users/self', async (req, res) => {
 
     const base64Credentials = authHeader.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+
     const [username, password] = credentials.split(':');
 
     console.log(username, password);
     try {
         // Find the user by email
         const user = await userModel(sequelize).findOne({ where: { username } });
+
         console.log(user);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -73,6 +75,7 @@ router.put('/users/self', async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Incorrect password' });
         }
+
 
         const { firstname, lastname, newpassword, email } = req.body;
         if(email){
@@ -88,15 +91,16 @@ router.put('/users/self', async (req, res) => {
         if(newpassword){
             user.password = newpassword;
         }
-       
-        // Save the updated user
+
         await user.save();
+
         return res.status(200).json({ message: 'User details updated successfully' });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 router.get('/v1/user/self', async (req, res) => {
     const authHeader = req.headers['authorization'];
@@ -142,5 +146,6 @@ router.get('/v1/user/self', async (req, res) => {
             return res.status(403).json({ message: 'User Forbidden'});
         }
 });
+
 
 module.exports = router;
