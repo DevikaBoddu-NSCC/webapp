@@ -3,6 +3,7 @@ const app = express();
 const {createDatabase, sequelize} = require('./src/database/database');
 const model = require('./src/models/User');
 const userController = require('./src/routes/userController');
+const healthz = require('./src/routes/healthz');
 const PORT = 3000;
 
 app.use(express.json());
@@ -19,6 +20,7 @@ async function initializeServer() {
     }
 }
 app.use(userController);
+app.use(healthz);
 initializeServer()
 
 

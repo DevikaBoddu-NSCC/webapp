@@ -6,7 +6,6 @@ const userModel = require('../models/User');
 
 const router = express.Router();
 
-// POST route to add a user
 router.post('/users', async (req, res) => {
     try {
         const { first_name, last_name, password, username } = req.body;
