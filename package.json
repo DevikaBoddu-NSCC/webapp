@@ -6,8 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:pre-migrate": "node scripts/database.js",
-    "db:migrate": "npm run db:pre-migrate && node_modules/.bin/sequelize db:migrate"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
