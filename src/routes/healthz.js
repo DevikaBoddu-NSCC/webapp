@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 app.use(express.json())
 const mysql = require('mysql2');
-//const router = express.Router();
+const router = express.Router();
 
 router.all('/healthz', (req, res, next) => {
     res.header('Cache-Control', 'no-cache');
