@@ -1,4 +1,4 @@
-name: Node.js CI
+name: assignment2workflow
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ jobs:
       run: npm install
 
     - name: Run compile check
-      run: npm run compile  # Adjust this command according to your project setup
+      run: npm run   # Adjust this command according to your project setup
 
     # - name: Run tests
     #   run: npm test  # Adjust this command according to your project setup
