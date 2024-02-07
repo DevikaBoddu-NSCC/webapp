@@ -22,7 +22,7 @@ jobs:
       run: npm install
 
     - name: Run compile check
-      run: npm run   # Adjust this command according to your project setup
+      run: npm start   # Adjust this command according to your project setup
 
     # - name: Run tests
     #   run: npm test  # Adjust this command according to your project setup
