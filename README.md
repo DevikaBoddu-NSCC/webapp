@@ -16,5 +16,3 @@ clone fork repo: git clone git@github.com:DevikaBoddu13/webapp.git
     2. Install dependences: npm install express 
     3. Build: npm run build \n
     4. Run: npm start \n
-
-
