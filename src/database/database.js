@@ -1,15 +1,16 @@
 const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 const model = require('../models/User');
-const dbName = "webapp_db_5";
+const dbName = "Cloud_db";
 
 const sequelize = new Sequelize({
-    dialect: 'mysql',
-    host: '127.0.0.1',
-    username: 'root',
-    password: 'admin@12345',
-    database: 'webapp_db_5',
+   dialect: process.env.DB_DIALECT,
+   host: process.env.DB_HOST,
+   username: process.env.DB_USERNAME,
+   password: process.env.DB_PASSWORD,
+   database: process.env.DB_NAME
 });
 
 const User = model(sequelize);

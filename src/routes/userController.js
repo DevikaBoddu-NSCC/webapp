@@ -82,7 +82,7 @@ router.put('/v1/user/self', async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        const hashedPassword = await bcrypt.hash(password, 10);
         const passwordMatch = await bcrypt.compare(oldpassword, user.password);
 
         if (!passwordMatch) {
@@ -110,7 +110,7 @@ router.put('/v1/user/self', async (req, res) => {
         }
 
         if(password){
-            user.password = password;
+            user.password = hashedPassword;
         }
 
         await user.save();
