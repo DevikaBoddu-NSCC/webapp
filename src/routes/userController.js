@@ -6,7 +6,7 @@ const userModel = require('../models/User');
 
 const router = express.Router();
 
-router.post('/users', async (req, res) => {
+router.post('/v1/user', async (req, res) => {
     try {
         const { first_name, last_name, password, username } = req.body;
         const existingUser = await userModel(sequelize).findOne({
@@ -45,7 +45,7 @@ router.post('/users', async (req, res) => {
 });
 
 
-router.put('/users/self', async (req, res) => {
+router.put('/v1/user/self', async (req, res) => {
 
     const authHeader = req.headers['authorization'];
     
