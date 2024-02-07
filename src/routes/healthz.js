@@ -2,14 +2,14 @@ const express = require('express');
 const app = express();
 app.use(express.json())
 const mysql = require('mysql2');
-const router = express.Router();
+//const router = express.Router();
 
 router.all('/healthz', (req, res, next) => {
     res.header('Cache-Control', 'no-cache');
     if (req.method !== 'GET') {
       return res.status(405).send();
     }
-    next(); 
+    next()
   });
 
   router.get('/healthz', async(req, res) => {
