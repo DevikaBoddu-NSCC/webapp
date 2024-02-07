@@ -35,7 +35,7 @@ router.all('/healthz', (req, res, next) => {
 
     } catch (error) {
         console.error('Error during health check:', error);
-        res.status(500).send();
+        res.status(503).send();
     }
 });
 
