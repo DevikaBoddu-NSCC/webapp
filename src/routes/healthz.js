@@ -9,7 +9,7 @@ router.all('/healthz', (req, res, next) => {
     if (req.method !== 'GET') {
       return res.status(405).send();
     }
-    next(); 
+    next()
   });
 
   router.get('/healthz', async(req, res) => {
