@@ -8,7 +8,22 @@ const router = express.Router();
 
 router.post('/v1/user', async (req, res) => {
     try {
-        const { first_name, last_name, password, username } = req.body;
+        const { first_name, last_name, password, username, account_created, account_updated  } = req.body;
+
+        if ( account_created!='' && account_created!=undefined)  {
+            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
+        }
+        if ( account_updated!='' && account_updated!=undefined)  {
+            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
+        }
+        if (!first_name || !last_name || !password || !username) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        if (!username || !isValidEmail(username)) {
+            return res.status(400).json({ error: 'Invalid email address' });
+        }
+
         const existingUser = await userModel(sequelize).findOne({
             where: {
                 username: username,
@@ -32,7 +47,7 @@ router.post('/v1/user', async (req, res) => {
             id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
-            username: user.username, // Using email as the username
+            username: user.username,
             account_created: user.account_created,
             account_updated: user.account_updated,
         };
@@ -40,55 +55,62 @@ router.post('/v1/user', async (req, res) => {
         res.status(201).json(userResponse);
     } catch (error) {
         console.error('Error creating user:', error);
-        res.status(500).send();
+        res.status(503).send();
     }
 });
-
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
 
 router.put('/v1/user/self', async (req, res) => {
-
-    const authHeader = req.headers['authorization'];
-    
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const base64Credentials = authHeader.split(' ')[1];
-    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-
-    const [username, password] = credentials.split(':');
-
-    console.log(username, password);
     try {
-        // Find the user by email
-        const user = await userModel(sequelize).findOne({ where: { username } });
+        const authHeader = req.headers['authorization'];
+        
+        if (!authHeader || !authHeader.startsWith('Basic ')) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
 
-        console.log(user);
+        const base64Credentials = authHeader.split(' ')[1];
+        const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+        const [email, oldpassword] = credentials.split(':');
+    
+        const { first_name, last_name, password, username, account_created, account_updated } = req.body;
+ 
+        const user = await userModel(sequelize).findOne({ where: { username: email } });
+
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        console.log(password, user.password);
-        console.log(passwordMatch);
+        const passwordMatch = await bcrypt.compare(oldpassword, user.password);
+
         if (!passwordMatch) {
-            return res.status(401).json({ error: 'Incorrect password' });
+            return res.status(401).json({ error: 'Unauthorized user' });
         }
 
+        if ( username ) {
+            return res.status(400).json({ error: 'You cannot update username.' });
+        }
+        if ( account_created!='' && account_created!=undefined)  {
+            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
+        }
+        if ( account_updated!='' && account_updated!=undefined)  {
+            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
+        }
+        // const { firstname, lastname, newpassword } = req.body;
+        if (!first_name || !last_name || !password ) {
+            return res.status(400).json({ error: 'Field values cannot be null.' });
+        }
+        if (first_name) {
+            user.first_name = first_name;
+        }
+        if (last_name) {
+            user.last_name = last_name;
+        }
 
-        const { firstname, lastname, newpassword, email } = req.body;
-        if(email){
-            return res.status(400).json({ error: 'Cannot Update Email' });
-        }
-        if (firstname) {
-            user.first_name = firstname;
-        }
-        if (lastname) {
-            user.last_name = lastname;
-        }
-
-        if(newpassword){
-            user.password = newpassword;
+        if(password){
+            user.password = password;
         }
 
         await user.save();
@@ -96,7 +118,7 @@ router.put('/v1/user/self', async (req, res) => {
         return res.status(200).json({ message: 'User details updated successfully' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(503).json({ error: 'Service Unavailable' });
     }
 });
 
@@ -121,10 +143,8 @@ router.get('/v1/user/self', async (req, res) => {
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
-        // console.log(password, user.password);
-        // console.log(passwordMatch);
         if (!passwordMatch) {
-            return res.status(401).json({ error: 'Incorrect password' });
+            return res.status(401).json({ error: 'Unauthorized user' });
         }
         const userdetails = await userModel(sequelize).findOne({
             where: {
@@ -142,7 +162,7 @@ router.get('/v1/user/self', async (req, res) => {
         return res.status(200).json({ message: 'User details : ', userResponse });
         }
         catch(error){
-            return res.status(403).json({ message: 'User Forbidden'});
+            return res.status(503).json({ message: 'Service Unavailable'});
         }
 });
 

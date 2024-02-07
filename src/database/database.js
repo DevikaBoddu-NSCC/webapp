@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
+
 const model = require('../models/User');
 const dbName = "webapp_db_5";
 
@@ -11,6 +12,7 @@ const sequelize = new Sequelize({
     database: 'webapp_db_5',
 });
 
+const User = model(sequelize);
 
 const createDatabase = async () =>{
    const connection = await mysql.createConnection({
@@ -23,4 +25,6 @@ const createDatabase = async () =>{
 
 module.exports = {
    createDatabase,
-   sequelize }
+   sequelize, 
+   User 
+}
