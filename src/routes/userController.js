@@ -109,7 +109,7 @@ router.put('/v1/user/self', async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({ message: 'User details updated successfully' });
+        return res.sendStatus(204);
     } catch (error) {
         console.error(error);
         return res.status(503).json({ error: 'Service Unavailable' });
@@ -153,7 +153,7 @@ router.get('/v1/user/self', async (req, res) => {
             account_created: user.account_created,
             account_updated: user.account_updated,
         };
-        return res.status(200).json({ message: 'User details : ', userResponse });
+        return res.status(200).json({ userResponse });
         }
         catch(error){
             return res.status(503).json({ message: 'Service Unavailable'});
