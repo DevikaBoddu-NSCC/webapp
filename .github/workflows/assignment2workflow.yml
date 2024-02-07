@@ -8,7 +8,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: admin@12345
+          MYSQL_DATABASE: webappdb
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -22,10 +30,7 @@ jobs:
       run: npm install
 
     - name: Run compile check
-      run: npm start   # Adjust this command according to your project setup
-
-    # - name: Run tests
-    #   run: npm test  # Adjust this command according to your project setup
+      run: npm run build
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
