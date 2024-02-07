@@ -12,8 +12,8 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: admin@12345  # Change this to your desired root password
-          MYSQL_DATABASE: webappdb  # Change this to your desired database name
+          MYSQL_ROOT_PASSWORD: admin@12345
+          MYSQL_DATABASE: webappdb
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -30,17 +30,7 @@ jobs:
       run: npm install
 
     - name: Run compile check
-      run: npm start   # Adjust this command according to your project setup
-
-    # - name: Run tests
-    #   run: npm test  # Adjust this command according to your project setup
-    - name: Stop Node.js server
-      run: npm stop   # Adjust this command according to how you stop your Node.js server
-
-    - name: Stop MySQL server
-      run: |
-        mysql -u root -p'admin@12345' -e "SHUTDOWN;"
-        echo "MySQL server stopped successfully!"
+      run: npm run build
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
