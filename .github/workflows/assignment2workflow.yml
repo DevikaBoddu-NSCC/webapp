@@ -34,6 +34,13 @@ jobs:
 
     # - name: Run tests
     #   run: npm test  # Adjust this command according to your project setup
+    - name: Stop Node.js server
+      run: npm stop   # Adjust this command according to how you stop your Node.js server
+
+    - name: Stop MySQL server
+      run: |
+        mysql -u root -p'admin@12345' -e "SHUTDOWN;"
+        echo "MySQL server stopped successfully!"
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
