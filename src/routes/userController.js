@@ -10,14 +10,11 @@ router.post('/v1/user', async (req, res) => {
     try {
         const { first_name, last_name, password, username, account_created, account_updated  } = req.body;
 
-        if ( account_created!='' && account_created!=undefined)  {
-            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
-        }
-        if ( account_updated!='' && account_updated!=undefined)  {
-            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
+        if ( account_created || account_updated)  {
+            return res.status(403).json({ error: 'User is forbidden to update account_created or account_updated details.' });
         }
         if (!first_name || !last_name || !password || !username) {
-            return res.status(400).json({ error: 'All fields are required' });
+            return res.status(400).json({ error: 'Field values cannot be null' });
         }
 
         if (!username || !isValidEmail(username)) {
@@ -92,13 +89,10 @@ router.put('/v1/user/self', async (req, res) => {
         if ( username ) {
             return res.status(400).json({ error: 'You cannot update username.' });
         }
-        if ( account_created!='' && account_created!=undefined)  {
-            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
+        if ( account_created || account_updated)  {
+            return res.status(403).json({ error: 'User is forbidden to update account_created or account_updated details.' });
         }
-        if ( account_updated!='' && account_updated!=undefined)  {
-            return res.status(403).json({ error: 'You are not allowed to update the account details.' });
-        }
-        // const { firstname, lastname, newpassword } = req.body;
+        
         if (!first_name || !last_name || !password ) {
             return res.status(400).json({ error: 'Field values cannot be null.' });
         }
