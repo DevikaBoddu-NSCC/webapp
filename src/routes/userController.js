@@ -14,7 +14,7 @@ router.post('/v1/user', async (req, res) => {
             return res.status(403).json({ error: 'User is forbidden to update account_created or account_updated details.' });
         }
         if (!first_name || !last_name || !password || !username) {
-            return res.status(400).json({ error: 'Field values cannot be null' });
+            return res.status(400).send();
         }
 
         if (!username || !isValidEmail(username)) {
@@ -94,7 +94,7 @@ router.put('/v1/user/self', async (req, res) => {
         }
         
         if (!first_name || !last_name || !password ) {
-            return res.status(400).json({ error: 'Field values cannot be null.' });
+            return res.status(400).send();
         }
         if (first_name) {
             user.first_name = first_name;
@@ -109,7 +109,7 @@ router.put('/v1/user/self', async (req, res) => {
 
         await user.save();
 
-        return res.sendStatus(204);
+        return res.status(204).send();
     } catch (error) {
         console.error(error);
         return res.status(503).json({ error: 'Service Unavailable' });
