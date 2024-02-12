@@ -41,7 +41,7 @@ jobs:
           echo "DB_NAME=Cloud_db" >> .env
 
     - name: Run tests
-      run: npm tests
+      run: npm test
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
