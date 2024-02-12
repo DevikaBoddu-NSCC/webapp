@@ -1,0 +1,45 @@
+name: integrationtests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  integrationtests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.Cloud_db }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run compile check
+      run: npm run build
+
+    - name: Create env File
+      run: |
+          for secret in $(jq -r 'keys | .[]' $ENV_CONTENTS); do
+            echo "${secret}=${!secret}" >> .env
+          done
+
+    - name: Run tests
+      run: npm tests
+
+    - name: Complete workflow
+      run: echo "Workflow completed successfully!"
