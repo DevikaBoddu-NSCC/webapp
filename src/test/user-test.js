@@ -24,14 +24,14 @@ describe('/v1/user endpoint', () => {
                     expect(response.body).to.have.property('id');
                     expect(response.body.first_name).to.equal(userData.first_name);
                     
-                }, 3000); 
+                }, 1000); 
                 const authHeader = Buffer.from('dev3@gmail.com:password1').toString('base64');
                 console.log("get", authHeader);
                 // setTimeout(async () => {
                 const response = await request(app)
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
-                    .expect(400); 
+                    .expect(200); 
 
                 console.log(response.body.userResponse);
                 assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
@@ -54,7 +54,7 @@ describe('/v1/user endpoint', () => {
 
 describe('PUT /v1/user/self', () => {
 
-    it('should update user information', async () => {
+    it('PUT & GET', async () => {
         try{
             const authHeader = Buffer.from('dev3@gmail.com:password1').toString('base64');
                 const userDataput = {
@@ -79,7 +79,7 @@ describe('PUT /v1/user/self', () => {
                 assert(response.body.userResponse.hasOwnProperty('id'), 'userResponse should have id property');
                 assert.strictEqual(response.body.userResponse.first_name, 'aa', 'First name should match');
                 assert.strictEqual(response.body.userResponse.last_name, 'bb', 'Last name should match');
-                },2000);
+                },1000);
 
                 const authHeaderGet = Buffer.from('dev3@gmail.com:password12').toString('base64');
                 //setTimeout(async () => {
