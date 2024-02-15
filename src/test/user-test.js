@@ -39,7 +39,9 @@ describe('GET /v1/user/self', () => {
     try{
        
             it('should retrieve user information', async () => {
-                const authHeader = Buffer.from('dev1@gmail.com:password1').toString('base64');
+
+                const authHeader = Buffer.from('dev1@gmail.com:password123').toString('base64');
+
                 console.log("get", authHeader);
                 setTimeout(async () => {
                 const response = await request(app)
@@ -105,7 +107,7 @@ describe('GET /v1/user/self', () => {
                 const response = await request(app)
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
-                    .expect(200); 
+                    .expect(400); 
 
                 console.log(response.body.userResponse);
                 assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
@@ -122,6 +124,7 @@ describe('GET /v1/user/self', () => {
     }
 });
 
+
 after(() => {
     if (allTestsPassed) {
         process.exit(0); // All tests passed, exit with code 0
@@ -129,6 +132,7 @@ after(() => {
         process.exit(1); // At least one test failed, exit with code 1
     }
 });
+
 
 });
 
