@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { sequelize } = require('../database/database');
 const userModel = require('../models/User');
 
+
 const router = express.Router();
 
 router.post('/v1/user', async (req, res) => {
@@ -159,6 +160,8 @@ router.get('/v1/user/self', async (req, res) => {
             return res.status(503).json({ message: 'Service Unavailable'});
         }
 });
+
+
 
 
 module.exports = router;
