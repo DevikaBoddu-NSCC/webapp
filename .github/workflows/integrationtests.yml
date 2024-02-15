@@ -43,8 +43,7 @@ jobs:
 
     - name: Create Database If Not Exists
       run: |
-        mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};"
-
+        mysql -h mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};"
     - name: Run tests
       run: npm test
 
