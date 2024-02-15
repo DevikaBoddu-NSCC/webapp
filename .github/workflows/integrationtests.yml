@@ -8,23 +8,18 @@ on:
 jobs:
   integrationtests:
     runs-on: ubuntu-latest
-    # services:
-    #   mysql:
-    #     image: mysql:8.0
-    #     env:
-    #       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-    #       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-    #     ports:
-    #       - 3306:3306
-    #     options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
 
-    - name: Install mysql
-      run: |
-        sudo apt-get update
-        sudo systemctl start mysql.service
-        sudo mysql --user=${{ secrets.MYSQL_USER}} --password=${{ secrets.MYSQL_ROOT_PASSWORD}} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};"
-
+    
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -48,9 +43,9 @@ jobs:
       #     echo "DB_NAME=Cloud_db" >> .env
       run: echo "${{ secrets.ENV_CONTENTS }}" > .env
 
-    # - name: Create Database If Not Exists
-    #   run: |
-    #     mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};"
+    - name: Create Database If Not Exists
+      run: |
+        mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};"
 
     - name: Run tests
       run: npm test
