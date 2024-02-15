@@ -54,9 +54,9 @@ describe('/v1/user endpoint', () => {
 
 describe('PUT /v1/user/self', () => {
 
-    it('should update user information', async () => {
+    it('PUT & GET', async () => {
         try{
-            const authHeader = Buffer.from('dev3@gmail.com:password1').toString('base64');
+            const authHeader = Buffer.from('dev1@gmail.com:password1').toString('base64');
                 const userDataput = {
                     first_name: 'aa',
                     last_name: 'bb',
@@ -106,13 +106,13 @@ describe('PUT /v1/user/self', () => {
 
 
 
-// after(() => {
-//     if (allTestsPassed) {
-//         process.exit(0); // All tests passed, exit with code 0
-//     } else {
-//         process.exit(1); // At least one test failed, exit with code 1
-//     }
-// });
+after(() => {
+    if (allTestsPassed) {
+        process.exit(0); // All tests passed, exit with code 0
+    } else {
+        process.exit(1); // At least one test failed, exit with code 1
+    }
+});
 
 });
 
