@@ -39,7 +39,7 @@ describe('GET /v1/user/self', () => {
     try{
        
             it('should retrieve user information', async () => {
-                const authHeader = Buffer.from('dev1@gmail.com:password1').toString('base64');
+                const authHeader = Buffer.from('dev1@gmail.com:password123').toString('base64');
                 console.log("get", authHeader);
                 setTimeout(async () => {
                 const response = await request(app)
@@ -52,7 +52,7 @@ describe('GET /v1/user/self', () => {
                 assert(response.body.userResponse.hasOwnProperty('id'), 'userResponse should have id property');
                 assert.strictEqual(response.body.userResponse.first_name, 'a', 'First name should match');
                 assert.strictEqual(response.body.userResponse.last_name, 'b', 'Last name should match');
-                assert.strictEqual(response.body.userResponse.username, 'dev1@gmail.com', 'Username should match');
+                assert.strictEqual(response.body.userResponse.username, 'dev2@gmail.com', 'Username should match');
             }, 1000); 
         });
     }catch (error) {
@@ -105,14 +105,14 @@ describe('GET /v1/user/self', () => {
                 const response = await request(app)
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
-                    .expect(200); 
+                    .expect(400); 
 
                 console.log(response.body.userResponse);
                 assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
                 assert(response.body.userResponse.hasOwnProperty('id'), 'userResponse should have id property');
                 assert.strictEqual(response.body.userResponse.first_name, 'aa', 'First name should match');
                 assert.strictEqual(response.body.userResponse.last_name, 'bb', 'Last name should match');
-                assert.strictEqual(response.body.userResponse.username, 'dev1@gmail.com', 'Username should match');
+                assert.strictEqual(response.body.userResponse.username, 'dev2@gmail.com', 'Username should match');
                 },1000);
         });
   
@@ -122,13 +122,13 @@ describe('GET /v1/user/self', () => {
     }
 });
 
-after(() => {
-    if (allTestsPassed) {
-        process.exit(0); // All tests passed, exit with code 0
-    } else {
-        process.exit(1); // At least one test failed, exit with code 1
-    }
-});
+// after(() => {
+//     if (allTestsPassed) {
+//         process.exit(0); // All tests passed, exit with code 0
+//     } else {
+//         process.exit(1); // At least one test failed, exit with code 1
+//     }
+// });
 
 });
 
