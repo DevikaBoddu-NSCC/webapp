@@ -1,7 +1,7 @@
 const assert = require('assert');
 const request = require('supertest');
-const app = require('../../server');
-const { createDatabase, sequelize, User } = require('../database/database');
+const app = require('../server');
+const { createDatabase, sequelize, User } = require('../src/database/database');
 // const {model} = require('../models/User');
 
 describe('/v1/user endpoint', () => {
