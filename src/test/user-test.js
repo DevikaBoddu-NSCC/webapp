@@ -5,6 +5,12 @@ const { createDatabase, sequelize, User } = require('../database/database');
 const userModel = require('../models/User');
 
 describe('/v1/user endpoint', () => {
+    const userData = {
+        first_name: 'a',
+        last_name: 'b',
+        username: 'dev1@gmail.com',
+        password: 'password1'
+    };
     before(async () => {
         await createDatabase();
         await sequelize.sync({ alter: true });
@@ -12,12 +18,7 @@ describe('/v1/user endpoint', () => {
 
     describe('POST /v1/user', () => {
         it('POST & GET', async () => {
-            const userData = {
-                first_name: 'a',
-                last_name: 'b',
-                username: 'dev1@gmail.com',
-                password: 'password1'
-            };
+            
 
             // POST request
             const postResponse = await request(app)
@@ -101,6 +102,11 @@ describe('/v1/user endpoint', () => {
         } catch (error) {
           console.error('Error closing Sequelize connection:', error);
         }
+        if (allTestsPassed) {
+            process.exit(0); // All tests passed, exit with code 0
+        } else {
+            process.exit(1); // At least one test failed, exit with code 1
+        }
       });
 });
 
@@ -108,11 +114,11 @@ describe('/v1/user endpoint', () => {
 
 
 // after(() => {
-//     if (allTestsPassed) {
-//         process.exit(0); // All tests passed, exit with code 0
-//     } else {
-//         process.exit(1); // At least one test failed, exit with code 1
-//     }
+    // if (allTestsPassed) {
+    //     process.exit(0); // All tests passed, exit with code 0
+    // } else {
+    //     process.exit(1); // At least one test failed, exit with code 1
+    // }
 // });
 
 
