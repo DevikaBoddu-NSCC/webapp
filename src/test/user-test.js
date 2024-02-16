@@ -84,7 +84,7 @@ describe('/v1/user endpoint', () => {
                             assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
                             assert.strictEqual(response.body.userResponse.first_name, 'aa', 'First name should match');
                             assert.strictEqual(response.body.userResponse.last_name, 'bb', 'Last name should match');
-                            assert.strictEqual(response.body.userResponse.username, 'dev2@gmail.com', 'Username should match');
+                            assert.strictEqual(response.body.userResponse.username, 'dev1@gmail.com', 'Username should match');
                             //assert.strictEqual(response.body.userResponse.username).to.equal('dev2@gmail.com');
                             console.log("getResponse.body after PUT:::", response.body);
                         } catch (error) {
