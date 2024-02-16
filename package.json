@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "test": "mocha src/test/user-test.js",
+    "test": "mocha test/user-test.js",
     "build": "webpack --config webpack.config.js",
     "start": "node ./dist/bundle.js"
   },
