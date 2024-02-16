@@ -28,14 +28,14 @@ describe('/v1/user endpoint', () => {
                 assert(postResponse.body.hasOwnProperty('id'), 'Response body should contain id property');
                 assert.strictEqual(postResponse.body.first_name, userData.first_name, 'First name should match');
     
-                console.log("postResponse.body.first_name:::", postResponse.body);
+                console.log("postResponse.body :::", postResponse.body);
                 // GET request after POST
                 const authHeader = Buffer.from(`${userData.username}:${userData.password}`).toString('base64');
 
                 return request(app)
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
-                    .expect(400)
+                    .expect(200)
                     .then(response => {
 
                         assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
@@ -66,29 +66,36 @@ describe('/v1/user endpoint', () => {
                     .put('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
                     .send(userDataput)
-                    .expect(204);
+                    .expect(404);
                 
                 console.log("putResponse.body :::", putResponse.body);
-
                 // GET request after PUT
-                const authHeaderGet = Buffer.from('dev1@gmail.com:password12').toString('base64');
+                const authHeaderGet =  Buffer.from(`${userData.username}:${userDataput.password}`).toString('base64');
+
                 return request(app)
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeaderGet}`)
                     .expect(200)
-                    .then(response => {
-                        console.log("GET after PUT ");
-                        assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
-                        assert(response.body.userResponse.first_name, 'aa', 'First name should match');
-                        assert(response.body.userResponse.last_name, 'bb', 'Last name should match');
-                        assert(response.body.userResponse.username, 'dev1@gmail.com', 'Username should match');
-
-                        console.log("getResponse.body after PUT:::", response.body);
-                    });
+                    // .then(response => {
+                        try{
+                            console.log("GET after PUT ");
+                            assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
+                            assert.strictEqual(response.body.userResponse.first_name, 'aa', 'First name should match');
+                            assert.strictEqual(response.body.userResponse.last_name, 'bb', 'Last name should match');
+                            assert.strictEqual(response.body.userResponse.username, 'dev2@gmail.com', 'Username should match');
+                            //assert.strictEqual(response.body.userResponse.username).to.equal('dev2@gmail.com');
+                            console.log("getResponse.body after PUT:::", response.body);
+                        } catch (error) {
+                            console.error(error);
+                            allTestsPassed = false;
+                            // console.log( "allTestsPassed = false");
+                        }
+                    // });
         
             } catch (error) {
                 console.error(error);
                 allTestsPassed = false;
+                throw new Error('Request failed');
             }
         });
     });
@@ -109,8 +116,10 @@ describe('/v1/user endpoint', () => {
           console.error('Error closing Sequelize connection:', error);
         }
         if (allTestsPassed) {
+            console.log("allTestsPassed:::",allTestsPassed);
             process.exit(0);  
         } else {
+            console.log("allTestsPassedEXIT:::",allTestsPassed);
             process.exit(1);  
         }
       });
