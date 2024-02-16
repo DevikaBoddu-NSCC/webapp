@@ -76,7 +76,9 @@ describe('/v1/user endpoint', () => {
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeaderGet}`)
                     .expect(200)
+
                     .then(response => {
+
                         try{
                             console.log("GET after PUT ");
                             assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
@@ -90,7 +92,11 @@ describe('/v1/user endpoint', () => {
                             allTestsPassed = false;
                             // console.log( "allTestsPassed = false");
                         }
+
                     });
+
+
+
         
             } catch (error) {
                 console.error(error);
