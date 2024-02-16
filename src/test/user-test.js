@@ -2,7 +2,7 @@ const assert = require('assert');
 const request = require('supertest');
 const app = require('../../server');
 const { createDatabase, sequelize, User } = require('../database/database');
-const userModel = require('../models/User');
+const {model} = require('../models/User');
 
 describe('/v1/user endpoint', () => {
     const userData = {
@@ -88,7 +88,7 @@ describe('/v1/user endpoint', () => {
     });
     after(async () => {
         try {
-          await userModel.destroy({
+          await model.destroy({
             where: { username: userData.username }
           });
           console.log('Test user deleted successfully.');
