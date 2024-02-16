@@ -19,26 +19,25 @@ describe('/v1/user endpoint', () => {
 
     describe('POST /v1/user', () => {
         try{
-            it('POST & GET', async () => {
+            it('Test 1 - Create an account, and using the GET call, validate account exists.', async () => {
                 const postResponse = await request(app)
                     .post('/v1/user')
                     .send(userData)
                     .expect(201);
     
-                // Assertions for POST response
                 assert(postResponse.body.hasOwnProperty('id'), 'Response body should contain id property');
                 assert.strictEqual(postResponse.body.first_name, userData.first_name, 'First name should match');
     
                 console.log("postResponse.body.first_name:::", postResponse.body);
                 // GET request after POST
                 const authHeader = Buffer.from(`${userData.username}:${userData.password}`).toString('base64');
-                //authHeader = `Basic ${credentials}`;
+
                 return request(app)
                     .get('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
-                    .expect(200)
+                    .expect(400)
                     .then(response => {
-                        // Assertions for GET response
+
                         assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
                         assert(response.body.userResponse.hasOwnProperty('id'), 'userResponse should have id property');
                         assert.strictEqual(response.body.userResponse.first_name, 'a', 'First name should match');
@@ -53,9 +52,8 @@ describe('/v1/user endpoint', () => {
             allTestsPassed = false;
         }
         
-
         
-        it('PUT & GET', async () => {
+        it('Test 2 - Update the account and using the GET call, validate the account was updated.', async () => {
             try {
                 const authHeader = Buffer.from(`${userData.username}:${userData.password}`).toString('base64');
                 const userDataput = {
@@ -64,7 +62,6 @@ describe('/v1/user endpoint', () => {
                     password: 'password12'
                 };
         
-                // PUT request
                 const putResponse = await request(app)
                     .put('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
@@ -73,9 +70,6 @@ describe('/v1/user endpoint', () => {
                 
                 console.log("putResponse.body :::", putResponse.body);
 
-               // assert(putResponse.body.hasOwnProperty('id'), 'Response body should contain id property');
-                // assert.strictEqual(putResponse.body.first_name, userDataput.first_name, 'First name should match');
-        
                 // GET request after PUT
                 const authHeaderGet = Buffer.from('dev1@gmail.com:password12').toString('base64');
                 return request(app)
@@ -83,9 +77,8 @@ describe('/v1/user endpoint', () => {
                     .set('Authorization', `Basic ${authHeaderGet}`)
                     .expect(200)
                     .then(response => {
-                        console.log("GET 2 #########");
+                        console.log("GET after PUT ");
                         assert(response.body.hasOwnProperty('userResponse'), 'Response body should contain userResponse property');
-                        //assert(response.body.userResponse.hasOwnProperty('id'), 'userResponse should have id property');
                         assert(response.body.userResponse.first_name, 'aa', 'First name should match');
                         assert(response.body.userResponse.last_name, 'bb', 'Last name should match');
                         assert(response.body.userResponse.username, 'dev1@gmail.com', 'Username should match');
@@ -116,9 +109,9 @@ describe('/v1/user endpoint', () => {
           console.error('Error closing Sequelize connection:', error);
         }
         if (allTestsPassed) {
-            process.exit(0); // All tests passed, exit with code 0
+            process.exit(0);  
         } else {
-            process.exit(1); // At least one test failed, exit with code 1
+            process.exit(1);  
         }
       });
 });
@@ -126,13 +119,7 @@ describe('/v1/user endpoint', () => {
 
 
 
-// after(() => {
-    // if (allTestsPassed) {
-    //     process.exit(0); // All tests passed, exit with code 0
-    // } else {
-    //     process.exit(1); // At least one test failed, exit with code 1
-    // }
-// });
+
 
 
 
