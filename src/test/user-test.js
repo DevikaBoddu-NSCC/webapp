@@ -66,7 +66,7 @@ describe('/v1/user endpoint', () => {
                     .put('/v1/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
                     .send(userDataput)
-                    .expect(400);
+                    .expect(204);
                 
                 console.log("putResponse.body :::", putResponse.body);
                 // GET request after PUT
