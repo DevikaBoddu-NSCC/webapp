@@ -19,11 +19,13 @@ jobs:
           unzip packer_1.7.6_linux_amd64.zip
           sudo mv packer /usr/local/bin/
           packer version
-          echo "PATH is: $PATH"  # Add this line for debugging
 
-      - name: Install packer plugins
+      - name: Download and install packer plugin for Google Compute
         run: |
-          packer plugins install github.com/hashicorp/googlecompute
+          wget https://releases.hashicorp.com/packer-plugin-googlecompute/1.1.4/packer-plugin-googlecompute_1.1.4_linux_amd64.zip
+          unzip packer-plugin-googlecompute_1.1.4_linux_amd64.zip
+          mkdir -p ~/.packer.d/plugins
+          mv packer-builder-googlecompute ~/.packer.d/plugins/
 
       - name: Run packer fmt
         run: |
