@@ -19,6 +19,9 @@ jobs:
           unzip packer_1.7.6_linux_amd64.zip
           sudo mv packer /usr/local/bin/
           packer version
+          
+      - name: Initialize Packer
+        run: packer init .
 
       - name: Run packer fmt
         run: |
