@@ -47,11 +47,9 @@ jobs:
           packer version
 
 
-    - name: Install packer plugins
+    - name: Initialize packer
       run: |
           packer init .
-          packer init -upgrade
-          packer plugins install github.com/hashicorp/googlecompute
 
     - name: Run packer fmt
       run: |
