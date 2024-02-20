@@ -19,7 +19,7 @@ jobs:
           unzip packer_1.7.6_linux_amd64.zip
           sudo mv packer /usr/local/bin/
           packer version
-
+          echo "PATH is: $PATH"  # Add this line for debugging
 
       - name: Install packer plugins
         run: |
@@ -35,4 +35,3 @@ jobs:
         run: |
           set -e
           packer validate .
- 
