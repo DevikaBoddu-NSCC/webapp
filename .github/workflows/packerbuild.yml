@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  integrationtests:
+  packerbuild:
     runs-on: ubuntu-latest
     services:
       mysql:

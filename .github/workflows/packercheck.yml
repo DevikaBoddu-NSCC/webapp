@@ -23,7 +23,6 @@ jobs:
 
       - name: Install packer plugins
         run: |
-          packer init .
           packer init -upgrade
           packer plugins install github.com/hashicorp/googlecompute
 
