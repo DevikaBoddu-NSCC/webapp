@@ -23,7 +23,6 @@ jobs:
 
       - name: Install packer plugins
         run: |
-          packer init .
           packer plugins install github.com/hashicorp/googlecompute
 
       - name: Run packer fmt
