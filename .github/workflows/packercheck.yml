@@ -20,13 +20,6 @@ jobs:
           sudo mv packer /usr/local/bin/
           packer version
 
-      - name: Download and install packer plugin for Google Compute
-        run: |
-          wget https://releases.hashicorp.com/packer-plugin-googlecompute/1.7.0/packer-plugin-googlecompute_1.7.0_linux_amd64.zip
-          unzip packer-plugin-googlecompute_1.1.4_linux_amd64.zip
-          mkdir -p ~/.packer.d/plugins
-          mv packer-builder-googlecompute ~/.packer.d/plugins/
-
       - name: Run packer fmt
         run: |
           set -e
