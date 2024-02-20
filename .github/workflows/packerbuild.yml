@@ -1,4 +1,4 @@
-name: integrationtests
+name: packerbuild
 
 on:
   pull_request:

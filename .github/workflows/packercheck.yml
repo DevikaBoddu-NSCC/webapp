@@ -1,4 +1,4 @@
-name: Packer Workflow
+name: packercheck
 
 on:
   pull_request:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Install packer plugins
         run: |
-          packer init -upgrade
+          packer init .
           packer plugins install github.com/hashicorp/googlecompute
 
       - name: Run packer fmt
