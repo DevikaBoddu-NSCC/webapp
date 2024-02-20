@@ -1,0 +1,19 @@
+[Unit]
+Description=Webapp Service
+ConditionPathExists=/opt/csye6225/webapp
+After=network.target
+
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt/csye6225/webapp
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=3
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=csye6225
+
+[Install]
+WantedBy=multi-user.target

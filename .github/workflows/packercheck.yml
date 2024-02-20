@@ -1,0 +1,34 @@
+name: packercheck
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  packercheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.6/packer_1.7.6_linux_amd64.zip
+          unzip packer_1.7.6_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+          packer version
+          
+      - name: Initialize Packer
+        run: packer init .
+
+      - name: Run packer fmt
+        run: |
+          set -e
+          packer fmt -check .
+
+      - name: Run packer validate
+        run: |
+          set -e
+          packer validate .

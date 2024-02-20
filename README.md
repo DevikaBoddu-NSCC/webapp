@@ -16,4 +16,13 @@ webapp- assignment2-cloud computing </br>
     4. Run: npm start </br>
     5. Test: npm test </br>
 
-review
+**Packer**
+Enable the following APIs::
+gcloud services enable sourcerepo.googleapis.com
+gcloud services enable compute.googleapis.com
+gcloud services enable servicemanagement.googleapis.com
+gcloud services enable storage-api.googleapis.com
+
+Verify Zone Existence: gcloud compute zones list --project=dev-nscc
+To Debug: packer build -debug build.pkr.hcl
+
