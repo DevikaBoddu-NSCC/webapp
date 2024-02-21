@@ -73,7 +73,7 @@ jobs:
       uses: 'google-github-actions/setup-gcloud@v2'
 
     - name: Run packer build
-      uses: packer build .
+      run: packer build .
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
