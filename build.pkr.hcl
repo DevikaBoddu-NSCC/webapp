@@ -53,24 +53,24 @@ build {
   }
 
   provisioner "file" {
-    source      = "./webapp.service" 
+    source      = "./webapp.service"
     destination = "/tmp/webapp.service"
   }
-    
-    provisioner "shell" {
+
+  provisioner "shell" {
     inline = [
-        "cd ~/webapp && npm i",
-        "sudo groupadd csye6225",
-        "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225",
-        "sudo mkdir -p /opt/csye6225",
-        "sudo mv ~/webapp /opt/csye6225/",
-        "sudo mv /tmp/webapp.service /etc/systemd/system/",
-        "sudo chown -R csye6225:csye6225 /opt/csye6225/",
-        "sudo chmod 755 /opt/csye6225/",
-        "sudo systemctl daemon-reload",
-        "sudo systemctl enable webapp",
-        "sudo systemctl start webapp"
-       
+      "cd ~/webapp && npm i",
+      "sudo groupadd csye6225",
+      "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225",
+      "sudo mkdir -p /opt/csye6225",
+      "sudo mv ~/webapp /opt/csye6225/",
+      "sudo mv /tmp/webapp.service /etc/systemd/system/",
+      "sudo chown -R csye6225:csye6225 /opt/csye6225/",
+      "sudo chmod 755 /opt/csye6225/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable webapp",
+      "sudo systemctl start webapp"
+
     ]
   }
 }

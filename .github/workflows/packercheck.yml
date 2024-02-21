@@ -19,7 +19,7 @@ jobs:
           unzip packer_1.7.6_linux_amd64.zip
           sudo mv packer /usr/local/bin/
           packer version
-          
+
       - name: Initialize Packer
         run: packer init .
 
@@ -32,3 +32,6 @@ jobs:
         run: |
           set -e
           packer validate .
+
+      - name: Complete workflow
+        run: echo "Workflow completed successfully!"
