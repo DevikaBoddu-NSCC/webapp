@@ -34,8 +34,6 @@ build {
       "sudo npm install -g npm@10.4.0", // added to update npm
       "sudo mkdir -p /home/centos/webapp/dist",
       "sudo chmod -R 777 /home/centos/webapp",
-      "sudo groupadd csye6225",
-      "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225"
     ]
   }
 
@@ -55,19 +53,25 @@ build {
   }
 
   provisioner "file" {
-    source      = "./webapp.service"
-    destination = "/home/centos/webapp/webapp.service"
+    source      = "./webapp.service" 
+    destination = "/tmp/webapp.service"
   }
-
-  provisioner "shell" {
+    
+    provisioner "shell" {
     inline = [
-      "cd ~/webapp && npm i",
-      // "sudo mv ~/webapp/webapp.service /etc/systemd/system/",
-      // "sudo mv ~/webapp /opt/csye6225",
-      // "sudo chown -R csye6225:csye6225 /opt/csye6225/webapp",
-      // "sudo systemctl daemon-reload",
-      // "sudo systemctl enable webapp.service",
-      // "sudo systemctl start webapp.service"
+        "cd ~/webapp && npm i",
+        "sudo groupadd csye6225",
+        "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225",
+        "sudo mkdir -p /opt/csye6225",
+        "sudo mv ~/webapp /opt/csye6225/",
+        "sudo mv /tmp/webapp.service /etc/systemd/system/",
+        "sudo chown -R csye6225:csye6225 /opt/csye6225/",
+        "sudo chmod 755 /opt/csye6225/",
+        "sudo systemctl daemon-reload",
+        "sudo systemctl enable webapp",
+        "sudo systemctl start webapp"
+       
     ]
   }
 }
+
