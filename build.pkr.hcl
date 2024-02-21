@@ -24,14 +24,13 @@ build {
   provisioner "shell" {
     inline = [
       "sudo yum update -y",
-      // "sudo dnf install -y unzip",
       "sudo dnf install -y mysql-server",
       "sudo systemctl start mysqld",
       "sudo systemctl enable mysqld",
       "sudo mysql -u root -p -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'admin@12345'; FLUSH PRIVILEGES;\"",
       "sudo dnf module enable -y nodejs:20",
       "sudo dnf install -y npm",
-      "sudo npm install -g npm@10.4.0", // added to update npm
+      "sudo npm install -g npm@10.4.0", 
       "sudo mkdir -p /home/centos/webapp/dist",
       "sudo chmod -R 777 /home/centos/webapp",
     ]
