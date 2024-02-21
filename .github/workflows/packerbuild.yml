@@ -72,14 +72,8 @@ jobs:
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v2'
 
-    # - name: Run packer build
-    #   uses: packer build .
+    - name: Run packer build
+      uses: packer build .
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
-
-      
-      
-
-
-
