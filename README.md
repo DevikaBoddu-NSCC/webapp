@@ -26,3 +26,4 @@ gcloud services enable storage-api.googleapis.com
 Verify Zone Existence: gcloud compute zones list --project=dev-nscc
 To Debug: packer build -debug build.pkr.hcl
 
+To Run: packer build .
