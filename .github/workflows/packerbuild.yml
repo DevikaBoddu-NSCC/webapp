@@ -72,11 +72,6 @@ jobs:
     - name: Debug GCP_APPLICATION_CREDENTIALS secret
       run: echo "${{ secrets.GCP_APPLICATION_CREDENTIALS }}"
 
-    - name: Debug service account roles
-      run: |
-         gcloud auth activate-service-account --key-file=${{ secrets.GCP_APPLICATION_CREDENTIALS }}
-         gcloud projects get-iam-policy dev-nscc --format='table(bindings.role)' --filter="bindings.members:serviceAccount:webapp-service-account@dev-nscc.iam.gserviceaccount.com"
-
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v2'
 
