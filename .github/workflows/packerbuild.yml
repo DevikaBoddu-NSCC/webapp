@@ -17,9 +17,10 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-        
-
-        
+    
+    permissions:
+          contents: 'read'
+          id-token: 'write'   
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -66,10 +67,10 @@ jobs:
     - name: Set up Google Cloud SDK
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        credentials_json: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
 
-    - name: Debug GCP_SA_KEY secret
-      run: echo "${{ secrets.GCP_SA_KEY }}"
+    - name: Debug GCP_APPLICATION_CREDENTIALS secret
+      run: echo "${{ secrets.GCP_APPLICATION_CREDENTIALS }}"
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v2'
