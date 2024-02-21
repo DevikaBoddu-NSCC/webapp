@@ -25,7 +25,7 @@ webapp- assignment2-cloud computing </br>
         gcloud services enable servicemanagement.googleapis.com</br>
         gcloud services enable storage-api.googleapis.com</br>
 **Packer**</br>
-    1. Packer format Check: packer fmt .</br>
+    1. Packer format: packer fmt .</br>
     2. Packer validate: packer validate .</br>
     3. Packer Debug: packer build -debug build.pkr.hcl</br>
     4. Packer build: packer build .</br>
