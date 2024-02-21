@@ -27,4 +27,8 @@ Verify Zone Existence: gcloud compute zones list --project=dev-nscc
 To Debug: packer build -debug build.pkr.hcl
 
 To Run: packer build .
-bj
+gcloud projects add-iam-policy-binding dev-nscc \  
+    --member=serviceAccount:packer-service-account@dev-nscc.iam.gserviceaccount.com\ 
+    --role=roles/compute.imageUser
+    
+gcloud projects get-iam-policy dev-nscc --format='table(bindings.role)' --filter="bindings.members:serviceAccount:packer-service-account@dev-nscc.iam.gserviceaccount.com"

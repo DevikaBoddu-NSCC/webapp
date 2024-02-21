@@ -8,11 +8,11 @@ packer {
 }
 
 source "googlecompute" "custom-image" {
-  project_id   = "dev-nscc"
-  source_image = "centos-stream-8-v20240110"
-  zone         = "us-east5-a"
-  image_family = "centos-stream-8"
-  ssh_username = "centos"
+  project_id   = "${var.project_id}"
+  source_image = "${var.source_image}"
+  zone         = "${var.zone}"
+  image_family = "${var.image_family}"
+  ssh_username = "${var.ssh_username}"
   labels = {
     "private" = "true"
   }
@@ -24,7 +24,7 @@ build {
   provisioner "shell" {
     inline = [
       "sudo yum update -y",
-      "sudo dnf install -y unzip",
+      // "sudo dnf install -y unzip",
       "sudo dnf install -y mysql-server",
       "sudo systemctl start mysqld",
       "sudo systemctl enable mysqld",
