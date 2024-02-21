@@ -27,4 +27,4 @@ Verify Zone Existence: gcloud compute zones list --project=dev-nscc
 To Debug: packer build -debug build.pkr.hcl
 
 To Run: packer build .
-
+To check service account roles: google-cloud-sdk % gcloud projects get-iam-policy dev-nscc --format='table(bindings.role)' --filter="bindings.members:serviceAccount:webapp-service-account@dev-nscc.iam.gserviceaccount.com"
