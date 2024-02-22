@@ -48,7 +48,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./packa.json"
+    source      = "./package.json"
     destination = "/home/centos/webapp/package.json"
   }
 
