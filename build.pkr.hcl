@@ -38,7 +38,7 @@ build {
   }
 
   provisioner "file" {
-    source      = fileexists("dist/bund.js") ? "dist/bundle.js" : "/"
+    source      = fileexists("dist/bundle.js") ? "dist/bundle.js" : "/"
     destination = "/home/centos/webapp/dist/bundle.js"
   }
 
@@ -48,7 +48,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./package.json"
+    source      = "./packa.json"
     destination = "/home/centos/webapp/package.json"
   }
 
