@@ -7,7 +7,7 @@ packer {
   }
 }
 
-source   "googlecompute" "custom-image" {
+source "googlecompute" "custom-image" {
   project_id   = "${var.project_id}"
   source_image = "${var.source_image}"
   zone         = "${var.zone}"
@@ -38,7 +38,7 @@ build {
   }
 
   provisioner "file" {
-    source      = fileexists("dist/bundle.js") ? "dist/bundle.js" : "/"
+    source      = fileexists("dist/bund.js") ? "dist/bundle.js" : "/"
     destination = "/home/centos/webapp/dist/bundle.js"
   }
 
