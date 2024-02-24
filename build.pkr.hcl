@@ -7,7 +7,7 @@ packer {
   }
 }
 
-source "googlecompute" "custom-image" {
+source "googlecompute" "custom-image"
   project_id   = "${var.project_id}"
   source_image = "${var.source_image}"
   zone         = "${var.zone}"
