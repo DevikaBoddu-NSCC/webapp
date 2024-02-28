@@ -1,6 +1,6 @@
 variable "project_id" {
   type    = string
-  default = "dev-nscc"
+  default = "dev-gcp-415604"
 }
 variable "source_image" {
   type    = string
