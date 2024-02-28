@@ -29,6 +29,6 @@ webapp- assignment2-cloud computing </br>
     2. Packer validate: packer validate .</br>
     3. Packer Debug: packer build -debug build.pkr.hcl</br>
     4. Packer build: packer build .</br>
-Adding changes to test the CI flow 02/24
+
 
 
