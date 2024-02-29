@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json())
 const mysql = require('mysql2');
 const router = express.Router();
-
+require('dotenv').config();
 router.all('/healthz', (req, res, next) => {
     res.header('Cache-Control', 'no-cache');
     if (req.method !== 'GET') {
@@ -45,9 +45,9 @@ function performHealthCheck() {
         try{
             // connecting to MySQL database
             const db = mysql.createConnection({
-                host: 'localhost',
-                user: 'root',
-                password: 'admin@12345'
+                host: process.env.DB_HOST,
+                user: process.env.DB_USERNAME,
+                password: process.env.DB_PASSWORD,
                 });
             db.connect((error) => {
                 if (error) {
