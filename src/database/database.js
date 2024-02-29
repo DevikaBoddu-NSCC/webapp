@@ -17,9 +17,9 @@ const User = model(sequelize);
 
 const createDatabase = async () =>{
    const connection = await mysql.createConnection({
-      host: "127.0.0.1",
-      user: "root",
-      password: "admin@12345",
+      host: process.env.DB_HOST,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
    });
    await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName};`);
 }

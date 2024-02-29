@@ -4,9 +4,11 @@ const {createDatabase, sequelize, User} = require('./src/database/database');
 const model = require('./src/models/User');
 const userController = require('./src/routes/userController');
 const healthz = require('./src/routes/healthz');
-require('dotenv').config();
 
-const PORT = process.env.PORT;
+
+
+const PORT = 3000;
+
 
 
 app.use(express.json());
@@ -17,7 +19,7 @@ async function initializeServer() {
             console.log(`Server is running on port ${PORT}`);
         });
         // Create the database
-        await createDatabase();
+        // await createDatabase();
         // Sync the database
         await sequelize.sync({ alter : true})
         console.log('Server initialized successfully');

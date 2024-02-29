@@ -1,4 +1,4 @@
-project_id   = "dev-gcp-415604"
+project_id   = "dev-csye6225-415809"
 source_image = "centos-stream-8-v20240110"
 zone         = "us-east5-a"
 image_family = "centos-stream-8"
