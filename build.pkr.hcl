@@ -23,7 +23,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo yum update -y",
+      // "sudo yum update -y",
       // "sudo dnf install -y unzip",
       // "sudo dnf install -y mysql-server",
       // "sudo systemctl start mysqld",
@@ -57,6 +57,11 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = "./logging_config.yaml"  # Path to your logging configuration file
+    destination = "/tmp/logging_config.yaml"
+  }
+
   provisioner "shell" {
     inline = [
       "cd ~/webapp && npm i",
@@ -67,9 +72,21 @@ build {
       "sudo mv /tmp/webapp.service /etc/systemd/system/",
       "sudo chown -R csye6225:csye6225 /opt/csye6225/",
       "sudo chmod 755 /opt/csye6225/",
+      #logs
+      "sudo mkdir -p /var/log/webapp",
+      "sudo chown -R csye6225:csye6225 /var/log/webapp/",
+      "sudo chmod 755 /var/log/webapp/",
+      #systemd-services
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp",
-      "sudo systemctl start webapp"
+      "sudo systemctl start webapp",
+      #ops-agent
+      "curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh",
+      "sudo bash add-google-cloud-ops-agent-repo.sh --also-install",
+      "sudo systemctl enable --now google-cloud-ops-agent",
+      #config
+      "sudo mv /tmp/logging_config.yaml /etc/google-cloud-ops-agent/config.yaml",
+      "sudo systemctl restart google-cloud-ops-agent"
 
     ]
   }

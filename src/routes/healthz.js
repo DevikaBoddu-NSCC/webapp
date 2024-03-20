@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 app.use(express.json())
 const mysql = require('mysql2');
+const logger = require('../../logger');
 const router = express.Router();
 require('dotenv').config();
 router.all('/healthz', (req, res, next) => {
@@ -28,12 +29,15 @@ router.all('/healthz', (req, res, next) => {
         const isHealthy = await performHealthCheck();
 
         if (isHealthy) {
+            logger.info('200 OK- Healthz is working as expected'); 
             res.status(200).send();
         } else {
+            logger.info('503 Service Unavailable'); 
             res.status(503).send();
         }
 
     } catch (error) {
+        logger.info('503 Service Unavailable'); 
         console.error('Error during health check:', error);
         res.status(503).send();
     }
@@ -54,6 +58,7 @@ function performHealthCheck() {
                     console.error('Error connecting to MySQL database:', error);
                     resolve(false);  
                 } else {
+                    logger.info('Connected to MySQL database!'); 
                     console.log('Connected to MySQL database!');
                     // closing MySQL connection
                     db.end((endError) => {
