@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
+const logger = require('../../logger');
 require('dotenv').config();
 
 const model = require('../models/User');
@@ -16,12 +17,15 @@ const sequelize = new Sequelize({
 const User = model(sequelize);
 
 const createDatabase = async () =>{
-   const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-   });
-   await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName};`);
+
+      const connection = await mysql.createConnection({
+         host: process.env.DB_HOST,
+         user: process.env.DB_USERNAME,
+         password: process.env.DB_PASSWORD,
+      });
+      await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName};`);
+      logger.info(`Database ${dbName} created successfully.`);
+   
 }
 
 module.exports = {

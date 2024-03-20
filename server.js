@@ -4,7 +4,7 @@ const {createDatabase, sequelize, User} = require('./src/database/database');
 const model = require('./src/models/User');
 const userController = require('./src/routes/userController');
 const healthz = require('./src/routes/healthz');
-
+const logger = require('./logger')
 
 
 const PORT = 3000;
@@ -19,10 +19,12 @@ async function initializeServer() {
             console.log(`Server is running on port ${PORT}`);
         });
         // Create the database
-        // await createDatabase();
+        //  await createDatabase();
         // Sync the database
         await sequelize.sync({ alter : true})
+        logger.info(`Server initialized successfully on port ${PORT}`);
         console.log('Server initialized successfully');
+        
     } catch (error) {
         console.error('Error initializing server:', error);
     }

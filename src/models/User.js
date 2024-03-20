@@ -36,21 +36,6 @@ const model = (sequelize) => { try {
             updatedAt : 'account_updated'
         });
 
-        // User.beforeCreate(async (user, options) => {
-        //     // Hash the password before creating the user
-        //     const hashedPassword = await bcrypt.hash(user.password, 10);
-        //     user.password = hashedPassword;
-        // });
-        
-        // User.beforeUpdate(async (user, options) => {
-        // // Hash the password before updating the user
-        // if (user.changed('password')) {
-        //     const hashedPassword = await bcrypt.hash(user.password, 10);
-        //     user.password = hashedPassword;
-        // }
-        // });
-        
-        // User.sync({ alter: true });
         return User;
     }
     catch (error) {
