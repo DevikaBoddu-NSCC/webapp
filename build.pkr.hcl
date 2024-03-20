@@ -58,7 +58,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./logging_config.yaml"  # Path to your logging configuration file
+    source      = "./logging_config.yaml" # Path to your logging configuration file
     destination = "/tmp/logging_config.yaml"
   }
 
