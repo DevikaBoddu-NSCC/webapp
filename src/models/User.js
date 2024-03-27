@@ -27,6 +27,18 @@ const model = (sequelize) => { try {
                 unique: true,
                 primaryKey: true,
             },
+            isVerified: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+            },
+            emailSentTime: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
+            emailVerifiedTime: {
+                type: Sequelize.DATE,
+                allowNull: true, 
+            },
             account_created : Sequelize.DATE,
             account_updated : Sequelize.DATE
             
