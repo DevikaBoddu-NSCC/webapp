@@ -75,6 +75,7 @@ function isValidEmail(email) {
 
 router.put('/v1/user/self', async (req, res) => {
     try {
+
         const authHeader = req.headers['authorization'];
         
         if (!authHeader || !authHeader.startsWith('Basic ')) {
@@ -86,14 +87,17 @@ router.put('/v1/user/self', async (req, res) => {
         const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
         const [email, oldpassword] = credentials.split(':');
     
-        const { first_name, last_name, password, username, account_created, account_updated } = req.body;
- 
+        const { first_name, last_name, password, username, account_created, account_updated, isVerified } = req.body;
+        if(isVerified == 0){
+            return res.status(404).json({ error: 'Please verify email address' });
+        }
         const user = await userModel(sequelize).findOne({ where: { username: email } });
 
         if (!user) {
             logger.warn('404 User not found', {severity : "warn"});
             return res.status(404).json({ error: 'User not found' });
         }
+       
         const hashedPassword = await bcrypt.hash(password, 10);
         const passwordMatch = await bcrypt.compare(oldpassword, user.password);
 
@@ -177,6 +181,8 @@ router.get('/v1/user/self', async (req, res) => {
             username: user.username, 
             account_created: user.account_created,
             account_updated: user.account_updated,
+            isVerified: user.isVerified,
+            emailSentTime: user.emailSentTime,
         };
         logger.info('200 OK');
         return res.status(200).json({ userResponse });
@@ -189,34 +195,21 @@ router.get('/v1/user/self', async (req, res) => {
 
 router.get('/verify-auth/:id', async(req, res) => {
 
-    const authHeader = req.headers['authorization'];
-    
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const base64Credentials = authHeader.split(' ')[1];
-    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-    const [username, password] = credentials.split(':');
-
     const { id } = req.params;
     try{
 
-        const user = await userModel(sequelize).findOne({ where: { username } });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return res.status(401).json({ error: 'Unauthorized user' });
-        }
-
-        //emailSentTime - get from Cloud SQL
         if(!user.emailSentTime) {
             return res.status(400).send('Verification is not successful');
         }
 
+        const user = await userModel(sequelize).findOne({ where: { id } });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if(!user.emailSentTime) {
+            return res.status(400).send('Verification is not successful');
+        }
         const currentTime = new Date();
         const timeDiff = currentTime - new Date(user.emailSentTime);
         
@@ -229,15 +222,11 @@ router.get('/verify-auth/:id', async(req, res) => {
         }else{
             return res.status(400).send('Verification not successful(link expired)');
         }
-
-
-            
-        
+  
     }catch(error){
         res.status(500).send('Error during email verification');
     }
 });
-
 async function publishMessage(email, uuid) {
     const data = {
         email: email,
@@ -252,9 +241,12 @@ async function publishMessage(email, uuid) {
         username: 'gcp',
     };
     try {
+        logger.info("Message publish");
         await pubSubClient.topic('verify_email_1',publishOptions).publishMessage({data: dataBuffer, attributes: customAttributes});
+        logger.info("Message published");
         console.log('Message published successfully');
     } catch (error) {
+        logger.error("error while publishing msg"+ error.message);
         console.error('Error publishing message:', error);
     }
 }
@@ -263,4 +255,3 @@ async function publishMessage(email, uuid) {
 
 
 module.exports = router;
-
