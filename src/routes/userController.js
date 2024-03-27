@@ -1,10 +1,14 @@
 // userController.js
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { sequelize } = require('../database/database');
+const { sequelize, User } = require('../database/database');
 const userModel = require('../models/User');
 const logger = require('../../logger');
-
+const { PubSub } = require('@google-cloud/pubsub');
+const pubSubClient = new PubSub({
+    apiEndpoint: 'us-east1-pubsub.googleapis.com:443',
+    projectId: 'dev-csye6225-415809',
+  });
 
 const router = express.Router();
 
@@ -44,7 +48,9 @@ router.post('/v1/user', async (req, res) => {
             last_name,
             password : hashedPassword,
             username,
-        });
+        })
+
+        await publishMessage(username, user.id);
 
         const userResponse = {
             id: user.id,
@@ -151,7 +157,9 @@ router.get('/v1/user/self', async (req, res) => {
             logger.warn('404 User not found', {severity : "warn"});
             return res.status(404).json({ error: 'User not found' });
         }
-
+        if(user.isVerified == 0){
+            return res.status(404).json({ error: 'Please verify email address' });
+        }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             logger.warn('401 Unauthorized user', {severity : "warn"});
@@ -178,6 +186,78 @@ router.get('/v1/user/self', async (req, res) => {
             return res.status(503).json({ message: 'Service Unavailable'});
         }
 });
+
+router.get('/verify-auth/:id', async(req, res) => {
+
+    const authHeader = req.headers['authorization'];
+    
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
+
+    const { id } = req.params;
+    try{
+
+        const user = await userModel(sequelize).findOne({ where: { username } });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Unauthorized user' });
+        }
+
+        //emailSentTime - get from Cloud SQL
+        if(!user.emailSentTime) {
+            return res.status(400).send('Verification is not successful');
+        }
+
+        const currentTime = new Date();
+        const timeDiff = currentTime - new Date(user.emailSentTime);
+        
+        if(timeDiff <= 12000){
+            user.isVerified = true;
+            user.emailVerifiedTime = currentTime;
+
+            await user.save();
+            return res.send('Verification successful');
+        }else{
+            return res.status(400).send('Verification not successful(link expired)');
+        }
+
+
+            
+        
+    }catch(error){
+        res.status(500).send('Error during email verification');
+    }
+});
+
+async function publishMessage(email, uuid) {
+    const data = {
+        email: email,
+        uuid: uuid
+    };
+    const dataBuffer = Buffer.from(JSON.stringify(data));
+    const publishOptions = {
+        messageOrdering: true,
+    };
+    const customAttributes = {
+        origin: 'nodejs-sample',
+        username: 'gcp',
+    };
+    try {
+        await pubSubClient.topic('verify_email_1',publishOptions).publishMessage({data: dataBuffer, attributes: customAttributes});
+        console.log('Message published successfully');
+    } catch (error) {
+        console.error('Error publishing message:', error);
+    }
+}
 
 
 
