@@ -227,7 +227,6 @@ router.get('/verify-auth/:id', async(req, res) => {
         res.status(500).send('Error during email verification');
     }
 });
-
 async function publishMessage(email, uuid) {
     const data = {
         email: email,
@@ -256,5 +255,3 @@ async function publishMessage(email, uuid) {
 
 
 module.exports = router;
-
-
