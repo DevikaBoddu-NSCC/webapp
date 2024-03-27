@@ -19,7 +19,7 @@ async function initializeServer() {
             console.log(`Server is running on port ${PORT}`);
         });
         // Create the database
-        //  await createDatabase();
+        //   await createDatabase();
         // Sync the database
         await sequelize.sync({ alter : true})
         logger.info(`Server initialized successfully on port ${PORT}`);
