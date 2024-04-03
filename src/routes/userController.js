@@ -77,7 +77,7 @@ router.put('/v1/user/self', async (req, res) => {
     try {
 
         const authHeader = req.headers['authorization'];
-        
+
         if (!authHeader || !authHeader.startsWith('Basic ')) {
             logger.warn('401 Unauthorized', {severity : "warn"});
             return res.status(401).json({ error: 'Unauthorized' });
@@ -88,11 +88,14 @@ router.put('/v1/user/self', async (req, res) => {
         const [email, oldpassword] = credentials.split(':');
     
         const { first_name, last_name, password, username, account_created, account_updated, isVerified } = req.body;
-        if(isVerified == 0){
-            return res.status(404).json({ error: 'Please verify email address' });
-        }
+
+        
         const user = await userModel(sequelize).findOne({ where: { username: email } });
 
+        if(user.isVerified == 0){
+            logger.warn('403 User Forbidden', {severity : "warn"});
+            return res.status(403).json({ error: 'Please verify email address' });
+        }
         if (!user) {
             logger.warn('404 User not found', {severity : "warn"});
             return res.status(404).json({ error: 'User not found' });
@@ -162,7 +165,8 @@ router.get('/v1/user/self', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
         if(user.isVerified == 0){
-            return res.status(404).json({ error: 'Please verify email address' });
+            logger.warn('403 User Forbidden', {severity : "warn"});
+            return res.status(403).json({ error: 'Please verify email address' });
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
@@ -198,35 +202,38 @@ router.get('/verify-auth/:id', async(req, res) => {
     const { id } = req.params;
     try{
 
-        if(!user.emailSentTime) {
-            return res.status(400).send('Verification is not successful');
-        }
-
         const user = await userModel(sequelize).findOne({ where: { id } });
+        logger.info('User with email is fetched', {severity : "info"});
+        if(!user.emailSentTime) {
+            logger.info('User with email is fetched', {severity : "info"});
+            return res.status(403).send('Forbidden : Verification is not successful');
+        }
         if (!user) {
+            logger.warn('User not found', {severity : "warn"})
             return res.status(404).json({ error: 'User not found' });
         }
 
-        if(!user.emailSentTime) {
-            return res.status(400).send('Verification is not successful');
-        }
         const currentTime = new Date();
         const timeDiff = currentTime - new Date(user.emailSentTime);
         
-        if(timeDiff <= 12000){
+        if(timeDiff <= 2 * 60 * 1000){
             user.isVerified = true;
             user.emailVerifiedTime = currentTime;
 
             await user.save();
-            return res.send('Verification successful');
+            logger.info('Success : Verification successful', {severity : "info"});
+            return res.send('Success : Verification successful');
         }else{
-            return res.status(400).send('Verification not successful(link expired)');
+            logger.warn('Forbidden : Verification not successful (link expired)', {severity : "warn"});
+            return res.status(403).send('Forbidden : Verification not successful (link expired)');
         }
   
     }catch(error){
+        logger.error('Error during email verification', {severity : "error"});
         res.status(500).send('Error during email verification');
     }
 });
+
 async function publishMessage(email, uuid) {
     const data = {
         email: email,
@@ -242,7 +249,7 @@ async function publishMessage(email, uuid) {
     };
     try {
         logger.info("Message publish");
-        await pubSubClient.topic('verify_email_1',publishOptions).publishMessage({data: dataBuffer, attributes: customAttributes});
+        await pubSubClient.topic('verify_email',publishOptions).publishMessage({data: dataBuffer, attributes: customAttributes});
         logger.info("Message published");
         console.log('Message published successfully');
     } catch (error) {
@@ -255,3 +262,5 @@ async function publishMessage(email, uuid) {
 
 
 module.exports = router;
+
+
