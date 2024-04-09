@@ -18,7 +18,7 @@ variable "ssh_username" {
   type    = string
   default = "centos"
 }
-variable "image_name"{
-  type = string
+variable "image_name" {
+  type    = string
   default = "packer-image-"
 }
