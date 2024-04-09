@@ -95,4 +95,4 @@ jobs:
           --image=${{ steps.get-latest-image.outputs.image }} --image-project=dev-csye6225-415809
       
     - name: Complete workflow
-      run: echo "Workflow completed successfully!"
+      run: echo "Workflow completed successfully--!"
