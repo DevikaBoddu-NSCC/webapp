@@ -18,9 +18,6 @@ source "googlecompute" "custom-image" {
     "private" = "true"
   }
 }
-locals {
-  timestamp = timestamp()
-}
 build {
   sources = ["source.googlecompute.custom-image"]
 
