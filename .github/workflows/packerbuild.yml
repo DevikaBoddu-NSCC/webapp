@@ -86,7 +86,7 @@ jobs:
     - name: Get latest image
       id: get-latest-image
       run: |
-        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-*" --sort-by="~creationTimestamp" | head -n 1)
+        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-image-*" --sort-by="~creationTimestamp" | head -n 1)
         echo "::set-output name=image::$IMAGE"
 
     - name: Create New Instance Template Version
