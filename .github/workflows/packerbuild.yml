@@ -67,10 +67,10 @@ jobs:
     - name: Set up Google Cloud SDK
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
+        credentials_json: ${{ secrets.GCP_CREDENTIALS_PACKER }}
 
     - name: Debug GCP_APPLICATION_CREDENTIALS secret
-      run: echo "${{ secrets.GCP_APPLICATION_CREDENTIALS }}"
+      run: echo "${{ secrets.GCP_CREDENTIALS_PACKER }}"
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v2'
