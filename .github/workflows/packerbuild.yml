@@ -78,5 +78,21 @@ jobs:
     - name: Run packer build
       run: packer build .
 
+    - name: Authenticate with GCP
+      uses: google-github-actions/auth@v2
+      with:
+          credentials: ${{ secrets.GCP_CREDENTIALS_FOR_INSTANCE }}
+
+    - name: Get latest image
+      id: get-latest-image
+      run: |
+        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-*" --sort-by="~creationTimestamp" | head -n 1)
+        echo "::set-output name=image::$IMAGE"
+
+    - name: Create New Instance Template Version
+      run: |
+          gcloud compute instance-templates update "csye6225-instance-template-*" \
+          --image=${{ steps.get-latest-image.outputs.image }} --image-project=dev-csye6225-415809
+      
     - name: Complete workflow
       run: echo "Workflow completed successfully!"

@@ -24,7 +24,8 @@ describe('/v1/user endpoint', () => {
                     .post('/v1/user')
                     .send(userData)
                     .expect(201);
-    
+                
+                await User.update({ isVerified: true }, { where: { username: userData.username } });
                 assert(postResponse.body.hasOwnProperty('id'), 'Response body should contain id property');
                 assert.strictEqual(postResponse.body.first_name, userData.first_name, 'First name should match');
     

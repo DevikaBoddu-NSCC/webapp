@@ -249,7 +249,9 @@ async function publishMessage(email, uuid) {
     };
     try {
         logger.info("Message publish");
-        await pubSubClient.topic('verify_email',publishOptions).publishMessage({data: dataBuffer, attributes: customAttributes});
+        if(email !== "dev1@gmail.com"){
+            await pubSubClient.topic('verify_email',publishOptions).publishMessage({data: dataBuffer, attributes: customAttributes});
+        }
         logger.info("Message published");
         console.log('Message published successfully');
     } catch (error) {
