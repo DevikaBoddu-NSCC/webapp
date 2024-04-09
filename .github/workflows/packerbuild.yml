@@ -67,10 +67,10 @@ jobs:
     - name: Set up Google Cloud SDK
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
+        credentials_json: ${{ secrets.GCP_CREDENTIALS_PACKER }}
 
     - name: Debug GCP_APPLICATION_CREDENTIALS secret
-      run: echo "${{ secrets.GCP_APPLICATION_CREDENTIALS }}"
+      run: echo "${{ secrets.GCP_CREDENTIALS_PACKER }}"
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v2'
@@ -79,14 +79,17 @@ jobs:
       run: packer build .
 
     - name: Authenticate with GCP
-      uses: google-github-actions/auth@v2
+      uses: 'google-github-actions/auth@v2'
       with:
-          credentials: ${{ secrets.GCP_CREDENTIALS_FOR_INSTANCE }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_FOR_INSTANCE }}
+
+    - name: Debug GCP_APPLICATION_CREDENTIALS secret
+      run: echo "${{ secrets.GCP_CREDENTIALS_FOR_INSTANCE }}"
 
     - name: Get latest image
       id: get-latest-image
       run: |
-        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-image-*" --sort-by="~creationTimestamp" | head -n 1)
+        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-*" --sort-by="~creationTimestamp" | head -n 1)
         echo "::set-output name=image::$IMAGE"
 
     - name: Create New Instance Template Version
