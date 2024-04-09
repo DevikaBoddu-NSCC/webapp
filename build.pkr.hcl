@@ -8,11 +8,11 @@ packer {
 }
 
 source "googlecompute" "custom-image" {
-  project_id              = "dev-csye6225-415809"
-  source_image_family     = "centos-stream-8"
-  zone                    = "us-east5-a"
-  ssh_username            = "centos"
-  ssh_timeout             = "10m"
+  project_id          = "dev-csye6225-415809"
+  source_image_family = "centos-stream-8"
+  zone                = "us-east5-a"
+  ssh_username        = "centos"
+  ssh_timeout         = "10m"
 }
 // source "googlecompute" "custom-image" {
 //   project_id   = "${var.project_id}"
