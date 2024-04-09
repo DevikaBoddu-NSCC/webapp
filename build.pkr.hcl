@@ -13,13 +13,10 @@ source "googlecompute" "custom-image" {
   source_image        = "${var.source_image}"
   source_image_family = "${var.image_family}"
   ssh_username        = "${var.ssh_username}"
-  image_name          = "packer-image-${lower(replace(timestamp(), ":", "-"))}"
+  image_name          = "${var.image_name}-${formatdate("YYYY-MM-DD-hh-mm-ss", timestamp())}"
   labels = {
     "private" = "true"
   }
-}
-locals {
-  timestamp = timestamp()
 }
 build {
   sources = ["source.googlecompute.custom-image"]
