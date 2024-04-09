@@ -8,11 +8,10 @@ packer {
 }
 
 source "googlecompute" "custom-image" {
-  project_id   = "${var.project_id}"
-  source_image = "${var.source_image}"
-  zone         = "${var.zone}"
-  image_family = "${var.image_family}"
-  ssh_username = "${var.ssh_username}"
+  project_id          = "${var.project_id}"
+  zone                = "${var.zone}"
+  source_image_family = "${var.image_family}"
+  ssh_username        = "${var.ssh_username}"
   labels = {
     "private" = "true"
   }
