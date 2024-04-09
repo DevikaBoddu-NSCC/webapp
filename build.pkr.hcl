@@ -8,15 +8,22 @@ packer {
 }
 
 source "googlecompute" "custom-image" {
-  project_id   = "${var.project_id}"
-  source_image = "${var.source_image}"
-  zone         = "${var.zone}"
-  image_family = "${var.image_family}"
-  ssh_username = "${var.ssh_username}"
-  labels = {
-    "private" = "true"
-  }
+  project_id          = "dev-csye6225-415809"
+  source_image_family = "centos-stream-8"
+  zone                = "us-east5-a"
+  ssh_username        = "centos"
+  ssh_timeout         = "10m"
 }
+// source "googlecompute" "custom-image" {
+//   project_id   = "${var.project_id}"
+//   source_image = "${var.source_image}"
+//   zone         = "${var.zone}"
+//   image_family = "${var.image_family}"
+//   ssh_username = "${var.ssh_username}"
+//   labels = {
+//     "private" = "true"
+//   }
+// }
 
 build {
   sources = ["source.googlecompute.custom-image"]
