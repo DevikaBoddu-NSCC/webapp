@@ -106,7 +106,7 @@ jobs:
            --instance-template-region=${{ secrets.REGION }} \
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
-           --image=$custom_image \
+           --image=$custom_image_id \
            --boot-disk-kms-keyring=${{ secrets.KEYRING }} \
            --boot-disk-kms-location=${{ secrets.REGION }} \
            --boot-disk-kms-key=projects/${{ secrets.PROJECT_ID }}/locations/${{ secrets.REGION }}/keyRings/${{ secrets.KEYRING }}/cryptoKeys/${{ secrets.VM_CRYPTO_KEY }} \
@@ -129,7 +129,7 @@ jobs:
           gcloud compute instance-groups managed rolling-action start-update ${{ secrets.INSTANCE_GROUP }} \
           --version=template=projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/${{ secrets.INSTANCE_TEMPLATE }} \
           --region=${{ secrets.REGION }} \
-          --max-unavailable=2
+          --max-unavailable=3
 
     - name: wait till Status is reached
       run: |
