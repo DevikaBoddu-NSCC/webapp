@@ -139,14 +139,14 @@ jobs:
 
     - name: rolling-update
       run: |
-          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \ 
-          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02
+          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \
+          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
           --region=us-east1
 
     - name: wait till Status is reached
       run: |
           gcloud compute instance-groups managed wait-until csye6225-managed-instance-group02 \
-          --version-target-reached
+          --version-target-reached \
           --region=us-east1
     
     - name: wait for rollout Status to be true
