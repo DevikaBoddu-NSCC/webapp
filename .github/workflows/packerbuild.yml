@@ -128,7 +128,7 @@ jobs:
           --base-instance-name=webapp-instance \
           --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
           --size=3 \
-          --zones=us-east1-b,us-east1-c 
+          --zones=us-east1-b,us-east1-c,us-east1-d
       
     - name: auto-scaling 
       run: |
