@@ -149,7 +149,7 @@ jobs:
           --version-target-reached
           --region=us-east1
     
-    - name: wait for rollout Status
+    - name: wait for rollout Status to be true
       run: |
           #!/bin/bash
           MIG_NAME="csye6225-managed-instance-group02"
@@ -168,7 +168,6 @@ jobs:
                 sleep 30 # Wait for 30 seconds before checking again
             fi
           done
-
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
