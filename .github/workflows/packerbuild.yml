@@ -90,11 +90,11 @@ jobs:
       id: get-latest-image
       run: |
         IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-*" --sort-by="~creationTimestamp" | head -n 1)
-        echo "image=$IMAGE"
+        echo $IMAGE 
 
     - name: Create New Instance Template Version
       run: |
-          gcloud compute instance-templates create "csye6225-instance-template-*" \
+          gcloud compute instance-templates create csye6225-instance-template \
           --image=${{ steps.get-latest-image.outputs.image }} --image-project=dev-csye6225-415809
       
     - name: Complete workflow
