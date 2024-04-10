@@ -146,7 +146,7 @@ jobs:
     - name: wait till Status is reached
       run: |
           gcloud compute instance-groups managed wait-until csye6225-managed-instance-group02 \
-          --version-target-reached
+          --version-target-reached \
           --region=us-east1
     
     - name: wait for rollout Status
