@@ -94,8 +94,29 @@ jobs:
 
     - name: Create New Instance Template Version
       run: |
-          gcloud compute instance-templates create "csye6225-instance-template" \
-          --image=${{ steps.get-latest-image.outputs.image }} --image-project=dev-csye6225-415809
+          gcloud compute instance-templates create csye6225-instance-template \
+           --region=us-east1 \
+           --instance-template-region=us-east1 \
+           --boot-disk-type=pd-standard \
+           --machine-type=e2-medium \
+           --image=${{ steps.get-latest-image.outputs.image }} \
+           --image-project=dev-csye6225-415809 \
+           --boot-disk-kms-keyring=keyring-10 \
+           --boot-disk-kms-location=us-east1 \
+           --boot-disk-kms-key=projects/dev-csye6225-415809/locations/us-east1/keyRings/keyring-10/cryptoKeys/vm-cmek-key-1 \
+           --metadata=startup-script="#\!/bin/bash
+           ENV_FILE=\"/opt/csye6225/webapp/.env\"
+           if [ -e \"\$ENV_FILE\" ]; then
+              sed -i '1iLOGPATH=/var/log/webapp/' \"\$ENV_FILE\"
+              sed -i 's/^DB_HOST=.*/DB_HOST=10.248.0.2/' \"\$ENV_FILE\"
+              sed -i 's/^DB_USERNAME=.*/DB_USERNAME=webapp/' \"\$ENV_FILE\"
+              sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=b%gL)k4_+Ccb+vyY/' \"\$ENV_FILE\"
+              sed -i 's/^DB_NAME=.*/DB_NAME=webapp/' \"\$ENV_FILE\"
+              echo \"\$ENV_FILE\"
+          fi
+          sudo chown -R csye6225:csye6225 /opt/csye6225/
+          sudo chown -R csye6225:csye6225 /var/log/webapp/
+          sudo systemctl restart webapp"
       
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
