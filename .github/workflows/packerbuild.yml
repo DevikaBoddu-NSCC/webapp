@@ -102,7 +102,6 @@ jobs:
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
            --image=$custom_image \
-           --image-project=dev-csye6225-415809 \
            --boot-disk-kms-keyring=keyring-10 \
            --boot-disk-kms-location=us-east1 \
            --boot-disk-kms-key=projects/dev-csye6225-415809/locations/us-east1/keyRings/keyring-10/cryptoKeys/vm-cmek-key-1 \
