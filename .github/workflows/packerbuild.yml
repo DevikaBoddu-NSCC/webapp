@@ -90,10 +90,10 @@ jobs:
       id: get-latest-image
       run: |
         image_list=$(gcloud compute images list --filter="name~'packer-.*'" --format="value(NAME, creationTimestamp)" | sort -k2 -r)
-        image=$(echo "$image_list" | head -n1 | awk '{print $1}')
+        custom_image=$(echo "$image_list" | head -n1 | awk '{print $1}')
 
-        echo "Latest Image: $image"
-
+        echo "Latest Image: $custom_image"
+        
     - name: Create New Instance Template Version
       run: |
           gcloud compute instance-templates create csye6225-instance-template02 \
@@ -101,7 +101,7 @@ jobs:
            --instance-template-region=us-east1 \
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
-           --image=$image \
+           --image=$custom_image \
            --image-project=dev-csye6225-415809 \
            --boot-disk-kms-keyring=keyring-10 \
            --boot-disk-kms-location=us-east1 \
@@ -139,8 +139,8 @@ jobs:
 
     - name: rolling-update
       run: |
-          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \ 
-          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02
+          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \
+          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
           --region=us-east1
 
     - name: wait till Status is reached
@@ -160,7 +160,7 @@ jobs:
                 --region=$REGION \
                 --format="value(status.versionTarget.isReached)")
             
-            if [ "$STATUS" == "true" ]; then
+            if [ "$STATUS" == "True" ]; then
                 echo "Rollout status: true. All VM instances are using the target version."
                 break
             else
