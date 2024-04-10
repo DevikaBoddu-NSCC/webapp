@@ -96,6 +96,7 @@ jobs:
         
     - name: Create New Instance Template Version
       run: |
+          echo "Using image: $custom_image"
           gcloud compute instance-templates create csye6225-instance-template02 \
            --region=us-east1 \
            --instance-template-region=us-east1 \
@@ -125,7 +126,7 @@ jobs:
           --base-instance-name=webapp-instance \
           --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
           --size=3 \
-          --zones=us-east1-b,us-east1-c  
+          --zones=us-east1-b,us-east1-c, us-east1-d 
       
     - name: auto-scaling 
       run: |
@@ -148,6 +149,7 @@ jobs:
           --version-target-reached \
           --region=us-east1
 
+
     - name: wait for rollout Status to be true
       run: |
           #!/bin/bash
@@ -158,7 +160,7 @@ jobs:
             STATUS=$(gcloud compute instance-groups managed describe $MIG_NAME \
                 --region=$REGION \
                 --format="value(status.versionTarget.isReached)")
-
+                
             if [ "$STATUS" == "True" ]; then
                 echo "Rollout status: true. All VM instances are using the target version."
                 break
