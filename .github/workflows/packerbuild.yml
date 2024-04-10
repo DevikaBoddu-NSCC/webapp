@@ -96,6 +96,7 @@ jobs:
         
     - name: Create New Instance Template Version
       run: |
+          echo "Using image: $custom_image"
           gcloud compute instance-templates create csye6225-instance-template02 \
            --region=us-east1 \
            --instance-template-region=us-east1 \
