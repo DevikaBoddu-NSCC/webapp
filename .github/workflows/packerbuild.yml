@@ -89,8 +89,10 @@ jobs:
     - name: Get latest image
       id: get-latest-image
       run: |
-        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-*" --sort-by="~creationTimestamp" | head -n 1)
-        echo $IMAGE
+        image_list=$(gcloud compute images list --filter="name~'packer-.*'" --format="value(NAME, creationTimestamp)" | sort -k2 -r)
+        image=$(echo "$image_list" | head -n1 | awk '{print $1}')
+
+        echo "Latest Image: $image"
 
     - name: Create New Instance Template Version
       run: |
@@ -117,6 +119,28 @@ jobs:
           sudo chown -R csye6225:csye6225 /opt/csye6225/
           sudo chown -R csye6225:csye6225 /var/log/webapp/
           sudo systemctl restart webapp"
+          
+    - name: Create managed-instance-group
+      run: |
+          gcloud compute instance-groups managed create csye6225-managed-instance-group \
+          --base-instance-name=webapp-instance \ 
+          --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01 \
+          --size=3 \
+          --zones=us-east1-b,us-east1-c  
       
+    - name: auto-scaling 
+      run: |
+          gcloud compute instance-groups managed set-autoscaling csye6225-managed-instance-group \
+          --region=us-east1 \
+          --min-num-replicas=1 \
+          --max-num-replicas=3 \
+          --target-cpu-utilization=0.05 \
+          --cool-down-period=90
+
+    - name: rolling-update
+      run: |
+          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group \ 
+          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01
+
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
