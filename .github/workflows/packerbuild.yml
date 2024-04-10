@@ -96,7 +96,7 @@ jobs:
 
     - name: Create New Instance Template Version
       run: |
-          gcloud compute instance-templates create csye6225-instance-template01 \
+          gcloud compute instance-templates create csye6225-instance-template02 \
            --region=us-east1 \
            --instance-template-region=us-east1 \
            --boot-disk-type=pd-standard \
@@ -122,7 +122,7 @@ jobs:
           
     - name: Create managed-instance-group
       run: |
-          gcloud compute instance-groups managed create csye6225-managed-instance-group \
+          gcloud compute instance-groups managed create csye6225-managed-instance-group02 \
           --base-instance-name=webapp-instance \ 
           --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01 \
           --size=3 \
@@ -130,7 +130,7 @@ jobs:
       
     - name: auto-scaling 
       run: |
-          gcloud compute instance-groups managed set-autoscaling csye6225-managed-instance-group \
+          gcloud compute instance-groups managed set-autoscaling csye6225-managed-instance-group02 \
           --region=us-east1 \
           --min-num-replicas=1 \
           --max-num-replicas=3 \
@@ -139,8 +139,8 @@ jobs:
 
     - name: rolling-update
       run: |
-          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group \ 
-          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01
+          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \ 
+          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
