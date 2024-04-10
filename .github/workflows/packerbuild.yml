@@ -93,16 +93,18 @@ jobs:
         custom_image=$(echo "$image_list" | head -n1 | awk '{print $1}')
 
         echo "Latest Image: $custom_image"
+        echo "::set-output name=image_id::$custom_image"
         
     - name: Create New Instance Template Version
       run: |
-          echo "Using image: $custom_image"
+          custom_image_id=${{ steps.get-latest-image.outputs.image_id }}
+          echo "Using image: $custom_image_id"
           gcloud compute instance-templates create csye6225-instance-template02 \
            --region=us-east1 \
            --instance-template-region=us-east1 \
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
-           --image=$custom_image \
+           --image=$custom_image_id \
            --boot-disk-kms-keyring=keyring-10 \
            --boot-disk-kms-location=us-east1 \
            --boot-disk-kms-key=projects/dev-csye6225-415809/locations/us-east1/keyRings/keyring-10/cryptoKeys/vm-cmek-key-1 \
