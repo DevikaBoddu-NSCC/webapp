@@ -146,8 +146,9 @@ jobs:
     - name: wait till Status is reached
       run: |
           gcloud compute instance-groups managed wait-until csye6225-managed-instance-group02 \
-          --version-target-reached
+          --version-target-reached \
           --region=us-east1
+    
 
     - name: wait for rollout Status to be true
       run: |
@@ -168,6 +169,7 @@ jobs:
                 sleep 30 # Wait for 30 seconds before checking again
             fi
           done
+
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!--"
