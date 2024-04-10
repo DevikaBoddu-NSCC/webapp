@@ -101,7 +101,7 @@ jobs:
            --instance-template-region=us-east1 \
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
-           --image=${{ steps.get-latest-image.outputs.image }} \
+           --image=$image \
            --image-project=dev-csye6225-415809 \
            --boot-disk-kms-keyring=keyring-10 \
            --boot-disk-kms-location=us-east1 \
@@ -123,8 +123,8 @@ jobs:
     - name: Create managed-instance-group
       run: |
           gcloud compute instance-groups managed create csye6225-managed-instance-group02 \
-          --base-instance-name=webapp-instance \ 
-          --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01 \
+          --base-instance-name=webapp-instance \
+          --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
           --size=3 \
           --zones=us-east1-b,us-east1-c  
       
@@ -141,6 +141,33 @@ jobs:
       run: |
           gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \ 
           --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02
+          --region=us-east1
+
+    - name: wait till Status is reached
+      run: |
+          gcloud compute instance-groups managed wait-until csye6225-managed-instance-group02 \
+          --version-target-reached
+          --region=us-east1
+    
+    - name: wait for rollout Status to be true
+      run: |
+          #!/bin/bash
+          MIG_NAME="csye6225-managed-instance-group02"
+          REGION="us-east1"
+        
+          while true; do
+            STATUS=$(gcloud compute instance-groups managed describe $MIG_NAME \
+                --region=$REGION \
+                --format="value(status.versionTarget.isReached)")
+            
+            if [ "$STATUS" == "true" ]; then
+                echo "Rollout status: true. All VM instances are using the target version."
+                break
+            else
+                echo "Rollout status: false. Waiting for rollout to complete..."
+                sleep 30 # Wait for 30 seconds before checking again
+            fi
+          done
 
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
