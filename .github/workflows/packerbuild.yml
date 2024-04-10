@@ -106,10 +106,13 @@ jobs:
            --instance-template-region=${{ secrets.REGION }} \
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
-           --image=$custom_image_id \
+           --image=$custom_image \
            --boot-disk-kms-keyring=${{ secrets.KEYRING }} \
            --boot-disk-kms-location=${{ secrets.REGION }} \
            --boot-disk-kms-key=projects/${{ secrets.PROJECT_ID }}/locations/${{ secrets.REGION }}/keyRings/${{ secrets.KEYRING }}/cryptoKeys/${{ secrets.VM_CRYPTO_KEY }} \
+           --tags=${{ secrets.tags }} \
+           --service-account=${{ secrets.SERVICE_ACCOUNT_INSTANCE }} \
+           --scopes=${{ secrets.scopes }} \
            --metadata=startup-script="#\!/bin/bash
            ENV_FILE=\"/opt/csye6225/webapp/.env\"
            if [ -e \"\$ENV_FILE\" ]; then
@@ -128,8 +131,7 @@ jobs:
       run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ secrets.INSTANCE_GROUP }} \
           --version=template=projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/${{ secrets.INSTANCE_TEMPLATE }} \
-          --region=${{ secrets.REGION }} \
-          --max-unavailable=3
+          --region=${{ secrets.REGION }} 
 
     - name: wait till Status is reached
       run: |
@@ -153,7 +155,7 @@ jobs:
                 break
             else
                 echo "Rollout status: false. Waiting for rollout to complete..."
-                sleep 30 
+                sleep 30 # Wait for 30 seconds before checking again
             fi
           done
 
