@@ -99,70 +99,55 @@ jobs:
       run: |
           custom_image_id=${{ steps.get-latest-image.outputs.image_id }}
           echo "Using image: $custom_image_id"
-          gcloud compute instance-templates create csye6225-instance-template02 \
-           --region=us-east1 \
-           --instance-template-region=us-east1 \
+          gcloud compute instance-templates create ${{ secrets.INSTANCE_TEMPLATE }} \
+           --region=${{ secrets.REGION }} \
+           --network=https://www.googleapis.com/compute/v1/projects/${{ secrets.PROJECT_ID }}/global/networks/${{ secrets.VPC_NETWORK }}  \
+           --subnet=https://www.googleapis.com/compute/v1/projects/${{ secrets.PROJECT_ID }}/regions/us-east1/subnetworks/${{ secrets.SUBNET }} \
+           --instance-template-region=${{ secrets.REGION }} \
            --boot-disk-type=pd-standard \
            --machine-type=e2-medium \
-           --image=$custom_image_id \
-           --boot-disk-kms-keyring=keyring-10 \
-           --boot-disk-kms-location=us-east1 \
-           --boot-disk-kms-key=projects/dev-csye6225-415809/locations/us-east1/keyRings/keyring-10/cryptoKeys/vm-cmek-key-1 \
+           --image=$custom_image \
+           --boot-disk-kms-keyring=${{ secrets.KEYRING }} \
+           --boot-disk-kms-location=${{ secrets.REGION }} \
+           --boot-disk-kms-key=projects/${{ secrets.PROJECT_ID }}/locations/${{ secrets.REGION }}/keyRings/${{ secrets.KEYRING }}/cryptoKeys/${{ secrets.VM_CRYPTO_KEY }} \
            --metadata=startup-script="#\!/bin/bash
            ENV_FILE=\"/opt/csye6225/webapp/.env\"
            if [ -e \"\$ENV_FILE\" ]; then
               sed -i '1iLOGPATH=/var/log/webapp/' \"\$ENV_FILE\"
-              sed -i 's/^DB_HOST=.*/DB_HOST=10.248.0.2/' \"\$ENV_FILE\"
-              sed -i 's/^DB_USERNAME=.*/DB_USERNAME=webapp/' \"\$ENV_FILE\"
-              sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=b%gL)k4_+Ccb+vyY/' \"\$ENV_FILE\"
-              sed -i 's/^DB_NAME=.*/DB_NAME=webapp/' \"\$ENV_FILE\"
+              sed -i 's/^DB_HOST=.*/DB_HOST=${{ secrets.DB_HOST }}/' \"\$ENV_FILE\"
+              sed -i 's/^DB_USERNAME=.*/DB_USERNAME=${{ secrets.DB_USERNAME }}/' \"\$ENV_FILE\"
+              sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/' \"\$ENV_FILE\"
+              sed -i 's/^DB_NAME=.*/DB_NAME=${{ secrets.DB_NAME }}/' \"\$ENV_FILE\"
               echo \"\$ENV_FILE\"
           fi
           sudo chown -R csye6225:csye6225 /opt/csye6225/
           sudo chown -R csye6225:csye6225 /var/log/webapp/
           sudo systemctl restart webapp"
-          
-    - name: Create managed-instance-group
-      run: |
-          gcloud compute instance-groups managed create csye6225-managed-instance-group02 \
-          --base-instance-name=webapp-instance \
-          --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
-          --size=3 \
-          --zones=us-east1-b,us-east1-c,us-east1-d
-      
-    - name: auto-scaling 
-      run: |
-          gcloud compute instance-groups managed set-autoscaling csye6225-managed-instance-group02 \
-          --region=us-east1 \
-          --min-num-replicas=1 \
-          --max-num-replicas=3 \
-          --target-cpu-utilization=0.05 \
-          --cool-down-period=90
 
-    - name: rolling-update
+    - name: Start rolling-update
       run: |
-          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group02 \
-          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template02 \
-          --region=us-east1
+          gcloud compute instance-groups managed rolling-action start-update ${{ secrets.INSTANCE_GROUP }} \
+          --version=template=projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/${{ secrets.INSTANCE_TEMPLATE }} \
+          --region=${{ secrets.REGION }} \
+          --max-unavailable=2
 
     - name: wait till Status is reached
       run: |
-          gcloud compute instance-groups managed wait-until csye6225-managed-instance-group02 \
+          gcloud compute instance-groups managed wait-until ${{ secrets.INSTANCE_GROUP }} \
           --version-target-reached \
-          --region=us-east1
-
-
-    - name: wait for rollout Status to be true
+          --region=${{ secrets.REGION }}
+    
+    - name: wait for rollout Status to be True
       run: |
           #!/bin/bash
-          MIG_NAME="csye6225-managed-instance-group02"
-          REGION="us-east1"
+          MIG_NAME="${{ secrets.INSTANCE_GROUP }}"
+          REGION="${{ secrets.REGION }}"
         
           while true; do
             STATUS=$(gcloud compute instance-groups managed describe $MIG_NAME \
                 --region=$REGION \
                 --format="value(status.versionTarget.isReached)")
-                
+            
             if [ "$STATUS" == "True" ]; then
                 echo "Rollout status: true. All VM instances are using the target version."
                 break
@@ -174,4 +159,4 @@ jobs:
 
 
     - name: Complete workflow
-      run: echo "Workflow completed successfully!--"
+      run: echo "Workflow completed successfully!"
