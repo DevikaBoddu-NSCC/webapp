@@ -6,20 +6,19 @@ packer {
     }
   }
 }
-
+locals {
+  timestamp = regex_replace(formatdate("YYYY-MM-DD-hh-mm-ss", timestamp()), "[- TZ:]", "")
+}
 source "googlecompute" "custom-image" {
   project_id          = "${var.project_id}"
   zone                = "${var.zone}"
   source_image        = "${var.source_image}"
   source_image_family = "${var.image_family}"
   ssh_username        = "${var.ssh_username}"
-  image_name          = "${var.image_name}-${formatdate("YYYY-MM-DD-hh-mm-ss", timestamp())}"
+  image_name          = "${var.image_name}-${local.timestamp}"
   labels = {
     "private" = "true"
   }
-}
-locals {
-  timestamp = timestamp()
 }
 build {
   sources = ["source.googlecompute.custom-image"]

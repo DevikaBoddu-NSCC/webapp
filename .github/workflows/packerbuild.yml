@@ -89,13 +89,58 @@ jobs:
     - name: Get latest image
       id: get-latest-image
       run: |
-        IMAGE=$(gcloud compute images list --format="value(NAME)" --filter="name=packer-*" --sort-by="~creationTimestamp" | head -n 1)
-        echo "::set-output name=image::$IMAGE"
+        image_list=$(gcloud compute images list --filter="name~'packer-.*'" --format="value(NAME, creationTimestamp)" | sort -k2 -r)
+        image=$(echo "$image_list" | head -n1 | awk '{print $1}')
+
+        echo "Latest Image: $image"
 
     - name: Create New Instance Template Version
       run: |
-          gcloud compute instance-templates update "csye6225-instance-template-*" \
-          --image=${{ steps.get-latest-image.outputs.image }} --image-project=dev-csye6225-415809
+          gcloud compute instance-templates create csye6225-instance-template01 \
+           --region=us-east1 \
+           --instance-template-region=us-east1 \
+           --boot-disk-type=pd-standard \
+           --machine-type=e2-medium \
+           --image=${{ steps.get-latest-image.outputs.image }} \
+           --image-project=dev-csye6225-415809 \
+           --boot-disk-kms-keyring=keyring-10 \
+           --boot-disk-kms-location=us-east1 \
+           --boot-disk-kms-key=projects/dev-csye6225-415809/locations/us-east1/keyRings/keyring-10/cryptoKeys/vm-cmek-key-1 \
+           --metadata=startup-script="#\!/bin/bash
+           ENV_FILE=\"/opt/csye6225/webapp/.env\"
+           if [ -e \"\$ENV_FILE\" ]; then
+              sed -i '1iLOGPATH=/var/log/webapp/' \"\$ENV_FILE\"
+              sed -i 's/^DB_HOST=.*/DB_HOST=10.248.0.2/' \"\$ENV_FILE\"
+              sed -i 's/^DB_USERNAME=.*/DB_USERNAME=webapp/' \"\$ENV_FILE\"
+              sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=b%gL)k4_+Ccb+vyY/' \"\$ENV_FILE\"
+              sed -i 's/^DB_NAME=.*/DB_NAME=webapp/' \"\$ENV_FILE\"
+              echo \"\$ENV_FILE\"
+          fi
+          sudo chown -R csye6225:csye6225 /opt/csye6225/
+          sudo chown -R csye6225:csye6225 /var/log/webapp/
+          sudo systemctl restart webapp"
+          
+    - name: Create managed-instance-group
+      run: |
+          gcloud compute instance-groups managed create csye6225-managed-instance-group \
+          --base-instance-name=webapp-instance \ 
+          --template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01 \
+          --size=3 \
+          --zones=us-east1-b,us-east1-c  
       
+    - name: auto-scaling 
+      run: |
+          gcloud compute instance-groups managed set-autoscaling csye6225-managed-instance-group \
+          --region=us-east1 \
+          --min-num-replicas=1 \
+          --max-num-replicas=3 \
+          --target-cpu-utilization=0.05 \
+          --cool-down-period=90
+
+    - name: rolling-update
+      run: |
+          gcloud compute instance-groups managed rolling-action start-update csye6225-managed-instance-group \ 
+          --version=template=projects/dev-csye6225-415809/regions/us-east1/instanceTemplates/csye6225-instance-template01
+
     - name: Complete workflow
       run: echo "Workflow completed successfully!"
