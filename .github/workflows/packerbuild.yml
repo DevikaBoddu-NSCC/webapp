@@ -93,10 +93,12 @@ jobs:
         custom_image=$(echo "$image_list" | head -n1 | awk '{print $1}')
 
         echo "Latest Image: $custom_image"
+        echo "::set-output name=image_id::$custom_image"
         
     - name: Create New Instance Template Version
       run: |
-          echo "Using image: $custom_image"
+          custom_image_id=${{ steps.get-latest-image.outputs.image_id }}
+          echo "Using image: $custom_image_id"
           gcloud compute instance-templates create ${{ secrets.INSTANCE_TEMPLATE }} \
            --region=${{ secrets.REGION }} \
            --network=https://www.googleapis.com/compute/v1/projects/${{ secrets.PROJECT_ID }}/global/networks/${{ secrets.VPC_NETWORK }}  \
@@ -108,6 +110,9 @@ jobs:
            --boot-disk-kms-keyring=${{ secrets.KEYRING }} \
            --boot-disk-kms-location=${{ secrets.REGION }} \
            --boot-disk-kms-key=projects/${{ secrets.PROJECT_ID }}/locations/${{ secrets.REGION }}/keyRings/${{ secrets.KEYRING }}/cryptoKeys/${{ secrets.VM_CRYPTO_KEY }} \
+           --tags=${{ secrets.tags }} \
+           --service-account=${{ secrets.SERVICE_ACCOUNT_INSTANCE }} \
+           --scopes=${{ secrets.scopes }} \
            --metadata=startup-script="#\!/bin/bash
            ENV_FILE=\"/opt/csye6225/webapp/.env\"
            if [ -e \"\$ENV_FILE\" ]; then
@@ -126,8 +131,7 @@ jobs:
       run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ secrets.INSTANCE_GROUP }} \
           --version=template=projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/${{ secrets.INSTANCE_TEMPLATE }} \
-          --region=${{ secrets.REGION }} \
-          --max-unavailable=2
+          --region=${{ secrets.REGION }} 
 
     - name: wait till Status is reached
       run: |
