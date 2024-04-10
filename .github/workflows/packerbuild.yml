@@ -93,10 +93,12 @@ jobs:
         custom_image=$(echo "$image_list" | head -n1 | awk '{print $1}')
 
         echo "Latest Image: $custom_image"
+        echo "::set-output name=image_id::$custom_image"
         
     - name: Create New Instance Template Version
       run: |
-          echo "Using image: $custom_image"
+          custom_image_id=${{ steps.get-latest-image.outputs.image_id }}
+          echo "Using image: $custom_image_id"
           gcloud compute instance-templates create ${{ secrets.INSTANCE_TEMPLATE }} \
            --region=${{ secrets.REGION }} \
            --network=https://www.googleapis.com/compute/v1/projects/${{ secrets.PROJECT_ID }}/global/networks/${{ secrets.VPC_NETWORK }}  \
