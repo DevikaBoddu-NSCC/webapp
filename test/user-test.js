@@ -4,7 +4,7 @@ const app = require('../server');
 const { createDatabase, sequelize, User } = require('../src/database/database');
 // const {model} = require('../models/User');
 
-describe('/v1/user endpoint', () => {
+describe('/v2/user endpoint', () => {
     let allTestsPassed = true;
     const userData = {
         first_name: 'a',
@@ -17,11 +17,11 @@ describe('/v1/user endpoint', () => {
         await sequelize.sync({ alter: true });
     });
 
-    describe('POST /v1/user', () => {
+    describe('POST /v2/user', () => {
         try{
             it('Test 1 - Create an account, and using the GET call, validate account exists.', async () => {
                 const postResponse = await request(app)
-                    .post('/v1/user')
+                    .post('/v2/user')
                     .send(userData)
                     .expect(201);
                 
@@ -34,7 +34,7 @@ describe('/v1/user endpoint', () => {
                 const authHeader = Buffer.from(`${userData.username}:${userData.password}`).toString('base64');
 
                 return request(app)
-                    .get('/v1/user/self')
+                    .get('/v2/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
                     .expect(200)
                     .then(response => {
@@ -64,7 +64,7 @@ describe('/v1/user endpoint', () => {
                 };
         
                 const putResponse = await request(app)
-                    .put('/v1/user/self')
+                    .put('/v2/user/self')
                     .set('Authorization', `Basic ${authHeader}`)
                     .send(userDataput)
                     .expect(204);
@@ -74,7 +74,7 @@ describe('/v1/user endpoint', () => {
                 const authHeaderGet =  Buffer.from(`${userData.username}:${userDataput.password}`).toString('base64');
 
                 return request(app)
-                    .get('/v1/user/self')
+                    .get('/v2/user/self')
                     .set('Authorization', `Basic ${authHeaderGet}`)
                     .expect(200)
 
