@@ -12,7 +12,7 @@ const pubSubClient = new PubSub({
 
 const router = express.Router();
 
-router.post('/v1/user', async (req, res) => {
+router.post('/v2/user', async (req, res) => {
     try {
         const { first_name, last_name, password, username, account_created, account_updated  } = req.body;
 
@@ -73,7 +73,7 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-router.put('/v1/user/self', async (req, res) => {
+router.put('/v2/user/self', async (req, res) => {
     try {
 
         const authHeader = req.headers['authorization'];
@@ -144,7 +144,7 @@ router.put('/v1/user/self', async (req, res) => {
 });
 
 
-router.get('/v1/user/self', async (req, res) => {
+router.get('/v2/user/self', async (req, res) => {
     const authHeader = req.headers['authorization'];
     
     if (!authHeader || !authHeader.startsWith('Basic ')) {
