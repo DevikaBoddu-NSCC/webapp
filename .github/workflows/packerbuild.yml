@@ -112,7 +112,6 @@ jobs:
            --boot-disk-kms-key=projects/${{ secrets.PROJECT_ID }}/locations/${{ secrets.REGION }}/keyRings/${{ secrets.KEYRING }}/cryptoKeys/${{ secrets.VM_CRYPTO_KEY }} \
            --tags=${{ secrets.tags }} \
            --service-account=${{ secrets.SERVICE_ACCOUNT_INSTANCE }} \
-           --scopes=${{ secrets.scopes }} \
            --metadata=startup-script="#\!/bin/bash
            ENV_FILE=\"/opt/csye6225/webapp/.env\"
            if [ -e \"\$ENV_FILE\" ]; then
